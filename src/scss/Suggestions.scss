@@ -1,0 +1,45 @@
+@use './Variables' as *;
+
+.suggestions {
+  z-index: 99999;
+  background: $white;
+  border-radius: $standard_border_radius;
+  border-top-left-radius: 0;
+  overflow-y: scroll;
+  width: 180px;
+  user-select: none;
+
+  .suggestion, a.suggestion {
+    padding: 0 $large_spacing;
+    height: 40px;
+    font-size: 0.8em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: normal;
+    color: $dark_gray;
+    transition: none;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    &:hover {
+      background: $purple;
+      color: $white;
+
+      svg { fill: $white; }
+    }
+  }
+
+  .divider {
+    height: 1px;
+    background: $light_gray;;
+    margin: $small_spacing 0;
+  }
+}

@@ -1,0 +1,11 @@
+@use './Variables' as *;
+
+.header {
+  min-height: $header_height;
+  max-height: $header_height;
+  height: $header_height;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;;
+  padding: $medium_spacing;
+}

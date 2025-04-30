@@ -1,0 +1,45 @@
+@use "sass:color";
+@use './Variables' as *;
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+.spinner {
+  animation: spin 1s infinite linear;
+  border: solid 12px transparent;
+  border-radius: 50%;
+  border-right-color: $purple;
+  border-top-color: $purple;
+  height: 96px;
+  width: 96px;
+  position: relative;
+
+  &:before {
+    content: '';
+    animation: spin 2s infinite linear;
+    border: solid 12px transparent;
+    border-radius: 50%;
+    border-right-color: color.adjust($purple, $lightness: 10%);
+    border-top-color: color.adjust($purple, $lightness: 10%);
+    height: 72px;
+    width: 72px;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  &:after {
+    content: '';
+    animation: spin 3s infinite linear;
+    border: solid 12px transparent;
+    border-radius: 50%;
+    border-right-color: color.adjust($purple, $lightness: 20%);
+    border-top-color: color.adjust($purple, $lightness: 20%);
+    height: 48px;
+    width: 48px;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+  }
+}

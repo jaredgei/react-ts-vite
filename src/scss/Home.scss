@@ -1,0 +1,12 @@
+@use "sass:color";
+@use './Variables' as *;
+
+.home {
+  background-color: $silver;
+  height: calc(100vh - $header_height);
+  padding: $medium_spacing;
+
+  h1 {
+    margin: 0;
+  }
+}

@@ -1,0 +1,137 @@
+@use "sass:color";
+@use './Variables' as *;
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+html,
+body,
+#root,
+.app {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Open Sans", sans-serif;
+  height: 100%;
+  width: 100%;
+  font-size: 1em;
+  background: $white;
+  color: $dark_gray;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+
+  .loadingContainer {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .page {
+    flex: 1;
+    height: 100%;
+  }
+
+  *,
+  *:before,
+  *:after {
+    box-sizing: inherit; // all elements use border-box but are easily overridable as needed
+  }
+
+  a, a:link, a:visited, a:active, .fakeLink {
+    color: $purple;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color $animation_duration;
+    cursor: pointer;
+
+    &:hover {
+      color: color.adjust($purple, $lightness: 12%);
+    }
+  }
+
+  img, svg { vertical-align: top; }
+  img { transition: opacity $animation_duration; }
+
+  select {
+    font-family: inherit;
+    appearance: none;
+    height: 40px;
+    padding: $small_spacing;
+    padding-right: $medium_spacing + 14px;
+    margin: 0;
+    border-radius: $standard_border_radius;
+    font-weight: bold;
+    border: 1px solid $light_gray;
+    background: color.adjust($light_gray, $lightness: 12%) url('../assets/caret.svg') right $small_spacing center/14px 14px no-repeat;
+    // hack to hide "focused" outline in firefox
+    color: transparent;
+    text-shadow: 0 0 0 $dark_gray;
+    max-width: 100%;
+
+    option {
+      // usually you can't style "option" tags but for some reason in ubuntu you can, so this will ensure text is readable
+      color: $white;
+      background: $black;
+    }
+
+    &::-ms-expand {
+      display: none;
+    }
+
+    &::-ms-value {
+      background: transparent;
+      color: $black;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  input[type='text'],
+  input[type='number'] {
+    background: color.adjust($light_gray, $lightness: 12%);
+    font-family: inherit;
+    color: $black;
+    padding: $small_spacing;
+    margin: 0;
+    border-radius: $standard_border_radius;
+    border: 1px solid $light_gray;
+    transition: border $animation_duration;
+    height: $input_height;
+    appearance: textfield;
+    -moz-appearance: textfield;
+
+    &:focus {
+      outline: none;
+      border: 1px solid $purple;
+    }
+
+    &.error {
+      border: 1px solid $red;
+    }
+  }
+
+  textarea {
+    background: color.adjust($light_gray, $lightness: 12%);
+    font-family: inherit;
+    color: $black;
+    padding: $small_spacing;
+    margin: 0;
+    border-radius: $standard_border_radius;
+    border: 1px solid $light_gray;
+    transition: border $animation_duration;
+
+    &:focus {
+      outline: none;
+      border: 1px solid $purple;
+    }
+  }
+
+  div {
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+  }
+}

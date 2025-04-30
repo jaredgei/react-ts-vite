@@ -1,0 +1,38 @@
+@use './Variables' as *;
+
+//@use './Variables' as *;
+$toggle_width: 64px;
+$toggle_height: 32px;
+$toggle_padding: 2px;
+$switch_width: $toggle_height - $toggle_padding * 2 - 1;
+
+.toggle {
+  user-select: none;
+  width: $toggle_width;
+  height: $toggle_height;
+  background-color: $gray;
+  border-radius: 20px;
+  border: 1px solid $white;
+  position: relative;
+  transition: background-color $animation_duration;
+  cursor: pointer;
+
+  .switch {
+    position: absolute;
+    top: $toggle_padding;
+    left: $toggle_padding;
+    bottom: $toggle_padding;
+    width: $switch_width;
+    border-radius: 50%;
+    background: $white;
+    transition: left $animation_duration;
+  }
+
+  &.on {
+    background: $purple;
+
+    .switch {
+      left: $toggle_width - $switch_width - $toggle_padding * 2; // use left for animation
+    }
+  }
+}

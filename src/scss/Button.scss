@@ -1,0 +1,57 @@
+@use "sass:color";
+@use './Variables' as *;
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $purple;
+  padding: $large_spacing;
+  border-radius: 32px;
+  color: $white;
+  font-weight: bold;
+  user-select: none;
+  cursor: pointer;
+  transition: background-color $animation_duration, opacity $animation_duration !important;
+
+  svg {
+    width: 24px;
+    height: 24px;
+    fill: $white;
+    margin-right: $small_spacing;
+  }
+
+  .buttonText {
+    line-height: 1em;
+    color: $white;
+    text-align: center;
+  }
+
+  &:hover {
+    background-color: color.adjust($purple, $lightness: 12%);
+  }
+
+  &.small {
+    padding: $medium_spacing;
+    border-radius: $standard_border_radius;
+    max-height: 48px;
+  }
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  &.secondary {
+    background-color: $white;
+    border: 2px solid $purple;
+
+    .buttonText { color: $purple;}
+    svg { fill: $purple; }
+    &:hover { background-color: $silver; }
+    &.disabled {
+      color: $gray;
+      svg { fill: $gray; }
+    }
+  }
+}
