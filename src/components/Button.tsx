@@ -1,10 +1,10 @@
 import 'scss/Button.scss';
-import React from 'react';
+import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
 type Props = {
   text: string,
-  icon?: React.ReactNode,
+  icon?: ReactNode,
   url?: string,
   size?: 'small' | 'large',
   type?: 'primary' | 'secondary',
