@@ -32,6 +32,7 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
   const [dropdownRect, setDropdownRect] = useState<DOMRect>(new DOMRect());
 
   useEffect(() => { // if props change update state
+    // @eslint-disable-next-line react-hooks/exhaustive-deps
     setWorkingOptions(options || []);
   }, [options]);
 
