@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "sync": "npm run build && rsync -avz -e 'ssh -i ~/.ssh/jared-key.pem' ./dist/* ubuntu@ec2-107-21-164-204.compute-1.amazonaws.com:~/ui",
     "lint": "eslint .",
     "preview": "vite preview"
   },
