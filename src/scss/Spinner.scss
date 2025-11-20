@@ -1,8 +1,10 @@
-@use "sass:color";
+@use 'sass:color';
 @use './Variables' as *;
 
 @keyframes spin {
-  100% { transform: rotate(360deg); }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .spinner {

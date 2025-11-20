@@ -5,5 +5,5 @@ import { ErrorProvider } from 'context/Error';
 createRoot(document.getElementById('root')!).render(
   <ErrorProvider>
     <App />
-  </ErrorProvider>
+  </ErrorProvider>,
 );

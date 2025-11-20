@@ -1,4 +1,4 @@
-@use "sass:color";
+@use 'sass:color';
 @use './Variables' as *;
 
 .button {
@@ -12,7 +12,9 @@
   font-weight: bold;
   user-select: none;
   cursor: pointer;
-  transition: background-color $animation_duration, opacity $animation_duration !important;
+  transition:
+    background-color $animation_duration,
+    opacity $animation_duration !important;
 
   svg {
     width: 24px;
@@ -46,12 +48,20 @@
     background-color: $white;
     border: 2px solid $purple;
 
-    .buttonText { color: $purple;}
-    svg { fill: $purple; }
-    &:hover { background-color: $silver; }
+    .buttonText {
+      color: $purple;
+    }
+    svg {
+      fill: $purple;
+    }
+    &:hover {
+      background-color: $silver;
+    }
     &.disabled {
       color: $gray;
-      svg { fill: $gray; }
+      svg {
+        fill: $gray;
+      }
     }
   }
 }

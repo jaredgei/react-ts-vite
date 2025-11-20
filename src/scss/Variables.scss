@@ -7,7 +7,7 @@ $black: #111111;
 $dark_gray: #222222;
 $gray: #666666;
 $light_gray: #dddddd;
-$silver: #F3F2FF;
+$silver: #f3f2ff;
 $white: #ffffff;
 $green: #2d9c62;
 $pink: #ffdeff;
@@ -15,7 +15,6 @@ $blue: #5b96ff;
 $purple: #806fd7;
 $yellow: #ffd22e;
 $red: #ff4d58;
-
 
 /*
 ===================
@@ -28,7 +27,6 @@ $medium_spacing: 16px;
 $large_spacing: 24px;
 $xlarge_spacing: 48px;
 
-
 /*
 ==================
 =======MISC=======
@@ -37,12 +35,14 @@ $xlarge_spacing: 48px;
 $header_height: 92px;
 $app_border_radius: 32px;
 $standard_border_radius: 16px;
-$standard_box_shadow:  rgba(0, 0, 0, 0.2) 0px 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
+$standard_box_shadow:
+  rgba(0, 0, 0, 0.2) 0px 3px 1px -2px,
+  rgba(0, 0, 0, 0.14) 0px 2px 2px 0px,
+  rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
 $input_height: 40px;
 $low_z_index: -1;
 $high_z_index: 9999;
 $animation_duration: 0.2s;
-
 
 /*
 ====================
@@ -51,13 +51,12 @@ $animation_duration: 0.2s;
 */
 $mobile: 980px;
 $directions: (
-'<': max-width,
-'<=': max-width,
-'>': min-width,
-'>=': min-width,
-between: between
+  '<': max-width,
+  '<=': max-width,
+  '>': min-width,
+  '>=': min-width,
+  between: between,
 );
-
 
 /*
 Example usage:

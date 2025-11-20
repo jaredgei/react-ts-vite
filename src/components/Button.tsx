@@ -3,13 +3,13 @@ import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
 type Props = {
-  text: string,
-  icon?: ReactNode,
-  url?: string,
-  size?: 'small' | 'large',
-  type?: 'primary' | 'secondary',
-  disabled?: boolean,
-  onClick?: () => void
+  text: string;
+  icon?: ReactNode;
+  url?: string;
+  size?: 'small' | 'large';
+  type?: 'primary' | 'secondary';
+  disabled?: boolean;
+  onClick?: () => void;
 };
 
 const Button = ({ text, icon, url, size = 'small', type = 'primary', disabled = false, onClick }: Props) => {

@@ -1,8 +1,8 @@
 import 'scss/Toggle.scss';
 
 type Props = {
-  value: boolean,
-  onToggle: () => void,
+  value: boolean;
+  onToggle: () => void;
 };
 
 const Toggle = ({ value, onToggle }: Props) => {

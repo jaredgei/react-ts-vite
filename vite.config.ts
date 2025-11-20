@@ -9,11 +9,11 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://localhost:8001',
-    }
+    },
   },
   css: {
     postcss: {
-      plugins: [autoprefixer({})]
-    }
-  }
+      plugins: [autoprefixer({})],
+    },
+  },
 });

@@ -9,7 +9,8 @@
   width: 180px;
   user-select: none;
 
-  .suggestion, a.suggestion {
+  .suggestion,
+  a.suggestion {
     padding: 0 $large_spacing;
     height: 40px;
     font-size: 0.8em;
@@ -33,13 +34,15 @@
       background: $purple;
       color: $white;
 
-      svg { fill: $white; }
+      svg {
+        fill: $white;
+      }
     }
   }
 
   .divider {
     height: 1px;
-    background: $light_gray;;
+    background: $light_gray;
     margin: $small_spacing 0;
   }
 }

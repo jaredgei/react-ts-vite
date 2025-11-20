@@ -54,7 +54,9 @@
     &.error {
       border-color: $red;
       color: $red;
-      svg { fill: $red; }
+      svg {
+        fill: $red;
+      }
     }
   }
 

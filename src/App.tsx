@@ -13,21 +13,27 @@ import Header from 'components/Header';
 function App() {
   const { error } = useContext(ErrorContext);
 
-  const router = createBrowserRouter([{
-    path: '/',
-    element: (
-      <div className='app'>
-        <Header />
-        <Error error={error} />
-        <div className='page'><Outlet /></div>
-      </div>
-    ),
-    errorElement: <NotFound />,
-    children: [{
+  const router = createBrowserRouter([
+    {
       path: '/',
-      element: <Home />
-    }]
-  }]);
+      element: (
+        <div className='app'>
+          <Header />
+          <Error error={error} />
+          <div className='page'>
+            <Outlet />
+          </div>
+        </div>
+      ),
+      errorElement: <NotFound />,
+      children: [
+        {
+          path: '/',
+          element: <Home />,
+        },
+      ],
+    },
+  ]);
 
   return <RouterProvider router={router} />;
 }

@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import { ErrorContext } from 'context/Error';
 
 type Props = {
-  error: Error | null
+  error: Error | null;
 };
 
 const Error = ({ error }: Props) => {
@@ -13,7 +13,11 @@ const Error = ({ error }: Props) => {
   return (
     <div className={'error' + (error ? ' hasError' : '')}>
       {error && <div className='errorMessage'>{error.message}</div>}
-      {error && <div className='closeError' onClick={() => setError(null)}>&times;</div>}
+      {error && (
+        <div className='closeError' onClick={() => setError(null)}>
+          &times;
+        </div>
+      )}
     </div>
   );
 };
