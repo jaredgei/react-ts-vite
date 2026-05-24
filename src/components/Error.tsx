@@ -11,12 +11,12 @@ const Error = ({ error }: Props) => {
   const { setError } = useContext(ErrorContext);
 
   return (
-    <div className={'error' + (error ? ' hasError' : '')}>
+    <div className={`error ${error ? 'hasError' : ''}`.trim()}>
       {error && <div className='errorMessage'>{error.message}</div>}
       {error && (
-        <div className='closeError' onClick={() => setError(null)}>
+        <button type='button' className='closeError' aria-label='Close error' onClick={() => setError(null)}>
           &times;
-        </div>
+        </button>
       )}
     </div>
   );

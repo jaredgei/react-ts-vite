@@ -17,6 +17,20 @@ body,
   color: $dark_gray;
 }
 
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+  text-align: inherit;
+}
+
 .app {
   display: flex;
   flex-direction: column;

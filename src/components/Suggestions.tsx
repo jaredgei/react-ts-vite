@@ -15,7 +15,7 @@ type Props = {
 };
 
 const Suggestions = ({ content, suggestions, filter }: Props) => {
-  const onSuggestionClick = (event: MouseEvent<HTMLDivElement>, suggestion: Suggestion) => {
+  const onSuggestionClick = (event: MouseEvent<HTMLButtonElement>, suggestion: Suggestion) => {
     if (!suggestion.onSelect) return;
     event.preventDefault();
     event.stopPropagation();
@@ -39,13 +39,14 @@ const Suggestions = ({ content, suggestions, filter }: Props) => {
             </a>
           );
         return (
-          <div
+          <button
+            type='button'
             className='suggestion'
             key={suggestion.name + index}
-            onClick={(event: MouseEvent<HTMLDivElement>) => onSuggestionClick(event, suggestion)}>
+            onClick={(event: MouseEvent<HTMLButtonElement>) => onSuggestionClick(event, suggestion)}>
             {suggestion.name}
             {suggestion.icon}
-          </div>
+          </button>
         );
       })}
     </div>

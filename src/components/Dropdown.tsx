@@ -31,28 +31,29 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [dropdownRect, setDropdownRect] = useState<DOMRect>(new DOMRect());
 
-  useEffect(() => {
-    // if props change update state
-    // @eslint-disable-next-line react-hooks/exhaustive-deps
+  const [prevOptions, setPrevOptions] = useState<Option[] | undefined>(options);
+  if (options !== prevOptions) {
+    setPrevOptions(options);
     setWorkingOptions(options || []);
-  }, [options]);
+  }
 
   useEffect(() => {
     if (isExpanded) return;
-    setTimeout(() => setWorkingOptions(options || []), 200); // once closing animation completes, reset options
-  }, [isExpanded]);
+    const timer = setTimeout(() => setWorkingOptions(options || []), 200); // once closing animation completes, reset options
+    return () => clearTimeout(timer);
+  }, [isExpanded, options]);
 
   const updateDimensions = useCallback(() => {
     if (!dropdown.current) return;
     setDropdownRect(dropdown.current.getBoundingClientRect());
-  }, [dropdown, popup]);
+  }, []);
 
   const handleClickOutside = useCallback(
     (event: MouseEvent) => {
       if (!dropdown.current || (event.target instanceof Node && dropdown.current.contains(event.target)) || !isExpanded) return;
       setIsExpanded(false);
     },
-    [dropdown, isExpanded, setIsExpanded],
+    [isExpanded],
   );
 
   useEffect(() => {
@@ -61,7 +62,7 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [handleClickOutside]);
+  }, [handleClickOutside, updateDimensions]);
 
   useEffect(() => {
     updateDimensions();
@@ -93,9 +94,9 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
   if (anchorPosition.includes('bottom')) popupStyle.bottom = window.innerHeight - dropdownRect.y - dropdownRect.height;
 
   return (
-    <div ref={dropdown} className={'dropdown' + (isExpanded ? ' expanded' : '')}>
+    <div ref={dropdown} className={`dropdown ${isExpanded ? 'expanded' : ''}`.trim()}>
       {!customButton && (
-        <div className={'dropdownContainer' + (isActive ? ' active' : '') + (hasError ? ' error' : '')} onClick={expand}>
+        <div className={`dropdownContainer ${isActive ? 'active' : ''} ${hasError ? 'error' : ''}`.trim()} onClick={expand}>
           <div className='dropdownTitle'>
             {/* render all options hidden so width scales to max */}
             <div className={'hiddenTitleOption'}>{title}</div>

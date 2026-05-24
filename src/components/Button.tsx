@@ -13,22 +13,22 @@ type Props = {
 };
 
 const Button = ({ text, icon, url, size = 'small', type = 'primary', disabled = false, onClick }: Props) => {
-  const classes = 'button' + (size === 'small' ? ' small' : '') + (disabled ? ' disabled' : '') + (type === 'secondary' ? ' secondary' : '');
+  const classes = `button ${size} ${type} ${disabled ? 'disabled' : ''}`.trim();
 
   if (url) {
     return (
-      <Link to={url} className={classes}>
+      <Link to={disabled ? '#' : url} className={classes}>
         {icon}
-        <div className='buttonText'>{text}</div>
+        <span className='buttonText'>{text}</span>
       </Link>
     );
   }
 
   return (
-    <div onClick={disabled ? () => {} : onClick} className={classes}>
+    <button type='button' disabled={disabled} onClick={onClick} className={classes}>
       {icon}
-      <div className='buttonText'>{text}</div>
-    </div>
+      <span className='buttonText'>{text}</span>
+    </button>
   );
 };
 

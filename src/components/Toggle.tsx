@@ -7,9 +7,9 @@ type Props = {
 
 const Toggle = ({ value, onToggle }: Props) => {
   return (
-    <div className={'toggle' + (value ? ' on' : '')} onClick={onToggle}>
-      <div className='switch' />
-    </div>
+    <button type='button' role='switch' aria-checked={value} className={`toggle ${value ? 'on' : ''}`.trim()} onClick={onToggle}>
+      <span className='switch' />
+    </button>
   );
 };
 
