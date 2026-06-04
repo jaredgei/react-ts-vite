@@ -1,14 +1,13 @@
 import 'scss/Error.scss';
-import { useContext } from 'react';
 
-import { ErrorContext } from 'context/Error';
+import { useError } from 'context/Error';
 
 type Props = {
   error: Error | null;
 };
 
 const Error = ({ error }: Props) => {
-  const { setError } = useContext(ErrorContext);
+  const { setError } = useError();
 
   return (
     <div className={`error ${error ? 'hasError' : ''}`.trim()}>
