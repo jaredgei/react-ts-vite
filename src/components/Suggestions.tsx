@@ -1,5 +1,6 @@
 import 'scss/Suggestions.scss';
 import { MouseEvent, ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 
 type Suggestion = {
   name?: string;
@@ -33,10 +34,10 @@ const Suggestions = ({ content, suggestions, filter }: Props) => {
         if (!suggestion.name) return <div key={index} className='divider' />;
         if (suggestion.uri)
           return (
-            <a href={suggestion.uri} key={suggestion.name + index} className='suggestion'>
+            <Link to={suggestion.uri} key={suggestion.name + index} className='suggestion'>
               {suggestion.name}
               {suggestion.icon}
-            </a>
+            </Link>
           );
         return (
           <button

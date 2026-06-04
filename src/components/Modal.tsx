@@ -6,7 +6,7 @@ type Props = {
   children: ReactNode;
 };
 
-const Modal = ({ onClose = () => {}, children }: Props) => {
+const Modal = ({ onClose, children }: Props) => {
   return (
     <div className='modal' onClick={onClose}>
       <div className='modalContent' onClick={(event) => event.stopPropagation()}>

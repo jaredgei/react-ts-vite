@@ -1,23 +1,21 @@
 import 'scss/Button.scss';
-import { ReactNode } from 'react';
+import { ReactNode, ButtonHTMLAttributes } from 'react';
 import { Link } from 'react-router-dom';
 
-type Props = {
+interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type'> {
   text: string;
   icon?: ReactNode;
   url?: string;
   size?: 'small' | 'large';
   type?: 'primary' | 'secondary';
-  disabled?: boolean;
-  onClick?: () => void;
-};
+}
 
-const Button = ({ text, icon, url, size = 'small', type = 'primary', disabled = false, onClick }: Props) => {
-  const classes = `button ${size} ${type} ${disabled ? 'disabled' : ''}`.trim();
+const Button = ({ text, icon, url, size = 'small', type = 'primary', disabled = false, onClick, className = '', ...props }: ButtonProps) => {
+  const classes = `button ${size} ${type} ${disabled ? 'disabled' : ''} ${className}`.trim();
 
   if (url) {
     return (
-      <Link to={disabled ? '#' : url} className={classes}>
+      <Link to={disabled ? '#' : url} className={classes} title={props.title} id={props.id} style={props.style}>
         {icon}
         <span className='buttonText'>{text}</span>
       </Link>
@@ -25,7 +23,7 @@ const Button = ({ text, icon, url, size = 'small', type = 'primary', disabled = 
   }
 
   return (
-    <button type='button' disabled={disabled} onClick={onClick} className={classes}>
+    <button type='button' disabled={disabled} onClick={onClick} className={classes} {...props}>
       {icon}
       <span className='buttonText'>{text}</span>
     </button>

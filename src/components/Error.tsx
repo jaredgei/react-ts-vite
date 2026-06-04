@@ -11,11 +11,13 @@ const Error = ({ error }: Props) => {
 
   return (
     <div className={`error ${error ? 'hasError' : ''}`.trim()}>
-      {error && <div className='errorMessage'>{error.message}</div>}
       {error && (
-        <button type='button' className='closeError' aria-label='Close error' onClick={() => setError(null)}>
-          &times;
-        </button>
+        <>
+          <div className='errorMessage'>{error.message}</div>
+          <button type='button' className='closeError' aria-label='Close error' onClick={() => setError(null)}>
+            &times;
+          </button>
+        </>
       )}
     </div>
   );
