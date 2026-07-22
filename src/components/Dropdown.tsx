@@ -1,8 +1,9 @@
 import 'scss/Dropdown.scss';
-import React, { useCallback, useEffect, useState, useRef, ReactNode } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useState, useRef, ReactNode } from 'react';
 
 import Suggestions from 'components/Suggestions';
 
+import { useViewportTracker } from 'hooks/useViewportTracker';
 import { caret, forward } from 'utilities/icons';
 
 type Option = {
@@ -37,6 +38,8 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
     setWorkingOptions(options || []);
   }
 
+  const viewportVersion = useViewportTracker(isExpanded);
+
   useEffect(() => {
     if (isExpanded) return;
     const timer = setTimeout(() => setWorkingOptions(options || []), 200); // once closing animation completes, reset options
@@ -56,30 +59,23 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
     [isExpanded],
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     updateDimensions();
+  }, [updateDimensions, viewportVersion]);
+
+  useEffect(() => {
+    if (!isExpanded) return;
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [handleClickOutside, updateDimensions]);
+  }, [isExpanded, handleClickOutside]);
 
-  useEffect(() => {
-    updateDimensions();
-    document.addEventListener('scroll', updateDimensions);
-    return () => {
-      document.removeEventListener('scroll', updateDimensions);
-    };
-  }, [updateDimensions]);
-
-  const expand = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      event.preventDefault();
-      event.stopPropagation();
-      setIsExpanded(!isExpanded);
-    },
-    [isExpanded],
-  );
+  const expand = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsExpanded((prev) => !prev);
+  }, []);
 
   const onOptionSelect = useCallback((option: Option) => {
     if (option.children) return setWorkingOptions(option.children);
