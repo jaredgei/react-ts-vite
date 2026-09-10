@@ -12,12 +12,12 @@
   align-items: center;
   justify-content: center;
   z-index: $high_z_index;
+}
 
-  .modalContent {
-    background: $white;
-    border-radius: $standard_border_radius;
-    padding: $medium_spacing;
-    width: 100%;
-    max-width: 600px;
-  }
+.modalContent {
+  background: $white;
+  border-radius: $standard_border_radius;
+  padding: $medium_spacing;
+  width: 100%;
+  max-width: 600px;
 }

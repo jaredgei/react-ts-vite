@@ -1,12 +1,10 @@
-import 'scss/Header.scss';
+import styles from 'scss/Header.module.scss';
 import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
-    <header className='header'>
-      <Link to='/' className='logo'>
-        Logo
-      </Link>
+    <header className={styles.header}>
+      <Link to='/'>Logo</Link>
     </header>
   );
 };

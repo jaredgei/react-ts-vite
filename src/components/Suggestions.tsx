@@ -1,4 +1,4 @@
-import 'scss/Suggestions.scss';
+import styles from 'scss/Suggestions.module.scss';
 import { MouseEvent, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -23,18 +23,17 @@ const Suggestions = ({ content, suggestions, filter }: Props) => {
     suggestion.onSelect();
   };
 
-  // filter out suggestions based on what's been inputted
   const filteredSuggestions = (suggestions || []).filter(
     (suggestion) => !filter || suggestion.name?.toLowerCase().indexOf(filter.toLowerCase()) !== -1,
   );
   return (
-    <div className='suggestions'>
+    <div className={styles.suggestions}>
       {content}
       {filteredSuggestions.map((suggestion, index) => {
-        if (!suggestion.name) return <div key={`divider-${index}`} className='divider' />;
+        if (!suggestion.name) return <div key={`divider-${index}`} className={styles.divider} />;
         if (suggestion.uri)
           return (
-            <Link to={suggestion.uri} key={suggestion.name + index} className='suggestion'>
+            <Link to={suggestion.uri} key={suggestion.name + index} className={styles.suggestion}>
               {suggestion.name}
               {suggestion.icon}
             </Link>
@@ -42,7 +41,7 @@ const Suggestions = ({ content, suggestions, filter }: Props) => {
         return (
           <button
             type='button'
-            className='suggestion'
+            className={styles.suggestion}
             key={suggestion.name + index}
             onClick={(event: MouseEvent<HTMLButtonElement>) => onSuggestionClick(event, suggestion)}>
             {suggestion.name}

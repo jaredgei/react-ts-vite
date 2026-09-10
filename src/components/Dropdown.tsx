@@ -1,4 +1,4 @@
-import 'scss/Dropdown.scss';
+import styles from 'scss/Dropdown.module.scss';
 import React, { useCallback, useEffect, useLayoutEffect, useState, useRef, ReactNode } from 'react';
 
 import Suggestions from 'components/Suggestions';
@@ -90,21 +90,21 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
   if (anchorPosition.includes('bottom')) popupStyle.bottom = window.innerHeight - dropdownRect.y - dropdownRect.height;
 
   return (
-    <div ref={dropdown} className={`dropdown ${isExpanded ? 'expanded' : ''}`.trim()}>
+    <div ref={dropdown} className={`${styles.dropdown} ${isExpanded ? styles.expanded : ''}`.trim()}>
       {!customButton && (
-        <div className={`dropdownContainer ${isActive ? 'active' : ''} ${hasError ? 'error' : ''}`.trim()} onClick={expand}>
-          <div className='dropdownTitle'>
-            <div className='dropdownTitleValue'>{value || title}</div>
+        <div className={`${styles.dropdownContainer} ${isActive ? styles.active : ''} ${hasError ? styles.error : ''}`.trim()} onClick={expand}>
+          <div className={styles.dropdownTitle}>
+            <div className={styles.dropdownTitleValue}>{value || title}</div>
           </div>
           {caret}
         </div>
       )}
       {customButton && (
-        <div className='dropdownContainerCustom' onClick={expand}>
+        <div className={styles.dropdownContainerCustom} onClick={expand}>
           {customButton}
         </div>
       )}
-      <div className='popup' style={popupStyle} ref={popup}>
+      <div className={styles.popup} style={popupStyle} ref={popup}>
         <Suggestions
           content={content}
           suggestions={workingOptions.map((option) =>

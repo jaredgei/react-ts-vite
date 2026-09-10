@@ -1,4 +1,4 @@
-import 'scss/Modal.scss';
+import styles from 'scss/Modal.module.scss';
 import { ReactNode } from 'react';
 
 type Props = {
@@ -8,8 +8,8 @@ type Props = {
 
 const Modal = ({ onClose, children }: Props) => {
   return (
-    <div className='modal' onClick={onClose}>
-      <div className='modalContent' onClick={(event) => event.stopPropagation()}>
+    <div className={styles.modal} onClick={onClose}>
+      <div className={styles.modalContent} onClick={(event) => event.stopPropagation()}>
         {children}
       </div>
     </div>

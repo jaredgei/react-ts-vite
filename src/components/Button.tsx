@@ -1,4 +1,4 @@
-import 'scss/Button.scss';
+import styles from 'scss/Button.module.scss';
 import { ReactNode, HTMLAttributes } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -23,13 +23,13 @@ const Button = ({
   className = '',
   ...props
 }: ButtonProps) => {
-  const classes = `button ${size} ${variant} ${disabled ? 'disabled' : ''} ${className}`.trim();
+  const classes = [styles.button, styles[size], styles[variant], disabled && styles.disabled, className].filter(Boolean).join(' ');
 
   if (url) {
     return (
       <Link to={disabled ? '#' : url} className={classes} {...props}>
         {icon}
-        <span className='buttonText'>{text}</span>
+        <span className={styles.buttonText}>{text}</span>
       </Link>
     );
   }
@@ -37,7 +37,7 @@ const Button = ({
   return (
     <button type={type} disabled={disabled} className={classes} {...props}>
       {icon}
-      <span className='buttonText'>{text}</span>
+      <span className={styles.buttonText}>{text}</span>
     </button>
   );
 };

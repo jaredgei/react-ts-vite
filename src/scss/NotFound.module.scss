@@ -1,0 +1,34 @@
+@use './Variables' as *;
+
+.notFound {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  h1 {
+    font-size: 12rem;
+    line-height: 1em;
+    font-weight: bold;
+    margin: 0;
+  }
+}
+
+.title {
+  font-weight: bold;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  margin-top: $small_spacing;
+}
+
+.description {
+  max-width: 400px;
+  opacity: 0.6;
+  text-align: center;
+  margin-top: $small_spacing;
+}
+
+.action {
+  margin-top: $large_spacing;
+}

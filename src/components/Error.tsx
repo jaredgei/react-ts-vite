@@ -1,4 +1,4 @@
-import 'scss/Error.scss';
+import styles from 'scss/Error.module.scss';
 
 import { useError } from 'context/Error';
 
@@ -10,11 +10,11 @@ const Error = ({ error }: Props) => {
   const { setError } = useError();
 
   return (
-    <div className={`error ${error ? 'hasError' : ''}`.trim()}>
+    <div className={`${styles.error} ${error ? styles.hasError : ''}`.trim()}>
       {error && (
         <>
-          <div className='errorMessage'>{error.message}</div>
-          <button type='button' className='closeError' aria-label='Close error' onClick={() => setError(null)}>
+          <div className={styles.errorMessage}>{error.message}</div>
+          <button type='button' className={styles.closeError} aria-label='Close error' onClick={() => setError(null)}>
             &times;
           </button>
         </>
