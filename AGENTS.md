@@ -1,6 +1,19 @@
 # AGENTS.md
 
-React 19 + TypeScript + Vite template with SCSS modules.
+The best code is the code never written. Optimize for the smallest change that fully solves the problem, and read the code a change touches before writing anything.
+
+## Before writing code
+
+Stop at the first rung that holds:
+
+1. Does this need to exist? If not, don't build it.
+2. Does it already exist in this repo? Reuse it; don't re-implement.
+3. Does the standard library or a native platform feature cover it? Use it.
+4. Does an already-installed dependency solve it? Use it.
+5. Can it be one line? Make it one line.
+6. Only then write the minimum that works.
+
+Deletion over addition. Boring over clever. Fewest files possible. Fix bugs at the root cause (the shared function), not per caller. Never cut validation, error handling, security, or accessibility to save code.
 
 ## Verification (must pass before work is done)
 
