@@ -1,6 +1,7 @@
 import styles from 'scss/NotFound.module.scss';
 
 import Button from 'components/Button';
+
 import { home } from 'utilities/icons';
 
 const NotFound = () => (

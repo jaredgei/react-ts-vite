@@ -1,8 +1,3 @@
-/*
-====================
-=======COLORS=======
-====================
-*/
 $black: #111111;
 $dark_gray: #222222;
 $gray: #666666;
@@ -16,22 +11,12 @@ $purple: #806fd7;
 $yellow: #ffd22e;
 $red: #ff4d58;
 
-/*
-===================
-======SPACING======
-===================
-*/
 $tiny_spacing: 4px;
 $small_spacing: 8px;
 $medium_spacing: 16px;
 $large_spacing: 24px;
 $xlarge_spacing: 48px;
 
-/*
-==================
-=======MISC=======
-==================
-*/
 $header_height: 92px;
 $app_border_radius: 32px;
 $standard_border_radius: 16px;
@@ -44,11 +29,6 @@ $low_z_index: -1;
 $high_z_index: 9999;
 $animation_duration: 0.2s;
 
-/*
-====================
-=====RESPONSIVE=====
-====================
-*/
 $mobile: 980px;
 $directions: (
   '<': max-width,
@@ -58,12 +38,6 @@ $directions: (
   between: between,
 );
 
-/*
-Example usage:
-@include responsive('<', 600px) {...}
-@include responsive('>=', 400px) {...}
-@include responsive('between', 400px, 600px) {...}
-*/
 @mixin responsive($direction, $px, $px2: null) {
   $dir: map-get($directions, $direction);
   @if $dir == null {

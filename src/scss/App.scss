@@ -50,7 +50,7 @@ button {
   *,
   *:before,
   *:after {
-    box-sizing: inherit; // all elements use border-box but are easily overridable as needed
+    box-sizing: inherit;
   }
 
   a,
@@ -88,13 +88,11 @@ button {
     font-weight: bold;
     border: 1px solid $light_gray;
     background: color.adjust($light_gray, $lightness: 12%) url('../assets/caret.svg') right $small_spacing center/14px 14px no-repeat;
-    // hack to hide "focused" outline in firefox
     color: transparent;
     text-shadow: 0 0 0 $dark_gray;
     max-width: 100%;
 
     option {
-      // usually you can't style "option" tags but for some reason in ubuntu you can, so this will ensure text is readable
       color: $white;
       background: $black;
     }

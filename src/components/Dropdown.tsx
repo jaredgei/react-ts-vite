@@ -1,9 +1,10 @@
 import styles from 'scss/Dropdown.module.scss';
 import React, { useCallback, useEffect, useLayoutEffect, useState, useRef, ReactNode } from 'react';
 
+import { useViewportTracker } from 'hooks/useViewportTracker';
+
 import Suggestions from 'components/Suggestions';
 
-import { useViewportTracker } from 'hooks/useViewportTracker';
 import { caret, forward } from 'utilities/icons';
 
 type Option = {
@@ -42,8 +43,8 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
 
   useEffect(() => {
     if (isExpanded) return;
-    const timer = setTimeout(() => setWorkingOptions(options || []), 200); // once closing animation completes, reset options
-    return () => clearTimeout(timer);
+    const resetAfterCloseAnimation = setTimeout(() => setWorkingOptions(options || []), 200);
+    return () => clearTimeout(resetAfterCloseAnimation);
   }, [isExpanded, options]);
 
   const updateDimensions = useCallback(() => {
