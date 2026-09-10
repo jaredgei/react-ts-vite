@@ -15,7 +15,7 @@
 .suggestion {
   padding: 0 $large_spacing;
   height: 40px;
-  font-size: 0.8em;
+  font-size: $small_font;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

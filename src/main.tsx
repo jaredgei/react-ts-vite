@@ -3,12 +3,16 @@ import { createRoot } from 'react-dom/client';
 
 import { ErrorProvider } from 'context/Error';
 
+import ErrorBoundary from 'components/ErrorBoundary';
+
 import App from 'App';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ErrorProvider>
-      <App />
-    </ErrorProvider>
+    <ErrorBoundary>
+      <ErrorProvider>
+        <App />
+      </ErrorProvider>
+    </ErrorBoundary>
   </StrictMode>,
 );

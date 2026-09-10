@@ -8,6 +8,7 @@ import NotFound from 'pages/NotFound';
 
 import Error from 'components/Error';
 import Header from 'components/Header';
+import RouteError from 'components/RouteError';
 
 const Layout = () => {
   const { error } = useError();
@@ -26,11 +27,15 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <Layout />,
-    errorElement: <NotFound />,
+    errorElement: <RouteError />,
     children: [
       {
         path: '/',
         element: <Home />,
+      },
+      {
+        path: '*',
+        element: <NotFound />,
       },
     ],
   },
