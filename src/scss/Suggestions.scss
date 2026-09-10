@@ -1,7 +1,7 @@
 @use './Variables' as *;
 
 .suggestions {
-  z-index: 99999;
+  z-index: $high_z_index;
   background: $white;
   border-radius: $standard_border_radius;
   border-top-left-radius: 0;

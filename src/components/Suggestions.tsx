@@ -31,7 +31,7 @@ const Suggestions = ({ content, suggestions, filter }: Props) => {
     <div className='suggestions'>
       {content}
       {filteredSuggestions.map((suggestion, index) => {
-        if (!suggestion.name) return <div key={index} className='divider' />;
+        if (!suggestion.name) return <div key={`divider-${index}`} className='divider' />;
         if (suggestion.uri)
           return (
             <Link to={suggestion.uri} key={suggestion.name + index} className='suggestion'>

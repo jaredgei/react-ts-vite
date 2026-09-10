@@ -1,16 +1,27 @@
 import { useSyncExternalStore } from 'react';
 
-let scrollResizeVersion = 0;
+type Viewport = {
+  scrollY: number;
+  width: number;
+  height: number;
+};
+
+let viewport: Viewport = { scrollY: 0, width: 0, height: 0 };
 const listeners = new Set<() => void>();
 
-const notify = () => {
-  scrollResizeVersion++;
-  listeners.forEach((cb) => cb());
+const update = () => {
+  viewport = {
+    scrollY: Math.max(0, window.scrollY),
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
+  listeners.forEach((listener) => listener());
 };
 
 if (typeof window !== 'undefined') {
-  window.addEventListener('resize', notify, { passive: true });
-  window.addEventListener('scroll', notify, { capture: true, passive: true });
+  update();
+  window.addEventListener('resize', update, { passive: true });
+  window.addEventListener('scroll', update, { capture: true, passive: true });
 }
 
 const subscribe = (callback: () => void) => {
@@ -19,11 +30,12 @@ const subscribe = (callback: () => void) => {
 };
 
 const noopSubscribe = () => () => {};
+const serverSnapshot: Viewport = { scrollY: 0, width: 0, height: 0 };
 
 export const useViewportTracker = (enabled = true) => {
   return useSyncExternalStore(
     enabled ? subscribe : noopSubscribe,
-    () => scrollResizeVersion,
-    () => 0,
+    () => viewport,
+    () => serverSnapshot,
   );
 };

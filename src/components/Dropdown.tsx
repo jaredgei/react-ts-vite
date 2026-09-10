@@ -38,7 +38,7 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
     setWorkingOptions(options || []);
   }
 
-  const viewportVersion = useViewportTracker(isExpanded);
+  const viewport = useViewportTracker(isExpanded);
 
   useEffect(() => {
     if (isExpanded) return;
@@ -61,7 +61,7 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
 
   useLayoutEffect(() => {
     updateDimensions();
-  }, [updateDimensions, viewportVersion]);
+  }, [updateDimensions, viewport]);
 
   useEffect(() => {
     if (!isExpanded) return;
@@ -94,13 +94,6 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
       {!customButton && (
         <div className={`dropdownContainer ${isActive ? 'active' : ''} ${hasError ? 'error' : ''}`.trim()} onClick={expand}>
           <div className='dropdownTitle'>
-            {/* render all options hidden so width scales to max */}
-            <div className={'hiddenTitleOption'}>{title}</div>
-            {options?.map((option: Option) => (
-              <div key={option.name} className={'hiddenTitleOption'}>
-                {option.name}
-              </div>
-            ))}
             <div className='dropdownTitleValue'>{value || title}</div>
           </div>
           {caret}

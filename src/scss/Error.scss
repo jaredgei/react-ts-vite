@@ -8,7 +8,7 @@
   font-weight: bold;
   height: 0px;
   width: 100%;
-  z-index: 9999;
+  z-index: $high_z_index;
   transition: height $animation_duration;
 
   .errorMessage {
