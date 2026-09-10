@@ -1,8 +1,10 @@
+@use 'sass:color';
 @use './Variables' as *;
 
 .suggestions {
   z-index: $high_z_index;
-  background: $white;
+  background: color.adjust($white, $alpha: -0.25);
+  backdrop-filter: $blur;
   border-radius: $standard_border_radius;
   border-top-left-radius: 0;
   overflow-y: scroll;
