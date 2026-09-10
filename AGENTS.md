@@ -8,6 +8,7 @@ React 19 + TypeScript + Vite template with SCSS modules.
 npm run typecheck
 npm run lint
 npm run format:check
+npm run test
 ```
 
 Use `npm run format` to auto-fix formatting, then re-run the checks.
@@ -80,3 +81,8 @@ import { isValidEmail } from 'utilities/helpers';
 
 - Keep dependencies minimal. Prefer the standard library and existing repo code over a new package.
 - Do not add a dependency without clear justification. When in doubt, ask first.
+
+## Testing
+
+- Vitest + `@testing-library/react`. Tests live in `src/tests/`, mirroring the source layout (`src/tests/components/Foo.test.tsx`), never beside the code they cover.
+- Test behavior through the public API: query by role/text, assert what a user sees, drive interaction with `@testing-library/user-event`.
