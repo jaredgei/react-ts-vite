@@ -1,11 +1,15 @@
 import styles from 'scss/Dropdown.module.scss';
-import React, { useCallback, useEffect, useLayoutEffect, useState, useRef, ReactNode } from 'react';
+import React, { useCallback, useEffect, useState, useRef, ReactNode } from 'react';
 
-import { useViewportTracker } from 'hooks/useViewportTracker';
+import { useElementRect } from 'hooks/useElementRect';
 
 import Suggestions from 'components/Suggestions';
 
 import { caret, forward } from 'utilities/icons';
+
+const ANIMATION_MS = 200;
+const POPUP_WIDTH = 180;
+const POPUP_GAP = 8;
 
 type Option = {
   name?: string;
@@ -27,11 +31,10 @@ type Props = {
 
 const Dropdown = ({ title, value, content, options, customButton, anchorPosition = 'top left', isActive, hasError }: Props) => {
   const dropdown = useRef<HTMLDivElement>(null);
-  const popup = useRef<HTMLDivElement>(null);
 
   const [workingOptions, setWorkingOptions] = useState<Option[]>(options || []);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const [dropdownRect, setDropdownRect] = useState<DOMRect>(new DOMRect());
+  const dropdownRect = useElementRect(dropdown, isExpanded);
 
   const [prevOptions, setPrevOptions] = useState<Option[] | undefined>(options);
   if (options !== prevOptions) {
@@ -39,18 +42,11 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
     setWorkingOptions(options || []);
   }
 
-  const viewport = useViewportTracker(isExpanded);
-
   useEffect(() => {
     if (isExpanded) return;
-    const resetAfterCloseAnimation = setTimeout(() => setWorkingOptions(options || []), 200);
+    const resetAfterCloseAnimation = setTimeout(() => setWorkingOptions(options || []), ANIMATION_MS);
     return () => clearTimeout(resetAfterCloseAnimation);
   }, [isExpanded, options]);
-
-  const updateDimensions = useCallback(() => {
-    if (!dropdown.current) return;
-    setDropdownRect(dropdown.current.getBoundingClientRect());
-  }, []);
 
   const handleClickOutside = useCallback(
     (event: MouseEvent) => {
@@ -59,10 +55,6 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
     },
     [isExpanded],
   );
-
-  useLayoutEffect(() => {
-    updateDimensions();
-  }, [updateDimensions, viewport]);
 
   useEffect(() => {
     if (!isExpanded) return;
@@ -84,11 +76,13 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
     if (option.onSelect) option.onSelect();
   }, []);
 
-  const popupStyle: { width: number; top?: number; left?: number; right?: number; bottom?: number } = { width: 180 };
-  if (anchorPosition.includes('left')) popupStyle.left = dropdownRect.x;
-  if (anchorPosition.includes('right')) popupStyle.right = window.innerWidth - dropdownRect.x - dropdownRect.width;
-  if (anchorPosition.includes('top')) popupStyle.top = dropdownRect.y + dropdownRect.height + 8;
-  if (anchorPosition.includes('bottom')) popupStyle.bottom = window.innerHeight - dropdownRect.y - dropdownRect.height;
+  const popupStyle: { width: number; top?: number; left?: number; right?: number; bottom?: number } = { width: POPUP_WIDTH };
+  if (dropdownRect) {
+    if (anchorPosition.includes('left')) popupStyle.left = dropdownRect.x;
+    if (anchorPosition.includes('right')) popupStyle.right = window.innerWidth - dropdownRect.x - dropdownRect.width;
+    if (anchorPosition.includes('top')) popupStyle.top = dropdownRect.y + dropdownRect.height + POPUP_GAP;
+    if (anchorPosition.includes('bottom')) popupStyle.bottom = window.innerHeight - dropdownRect.y - dropdownRect.height;
+  }
 
   return (
     <div ref={dropdown} className={`${styles.dropdown} ${isExpanded ? styles.expanded : ''}`.trim()}>
@@ -105,7 +99,7 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
           {customButton}
         </div>
       )}
-      <div className={styles.popup} style={popupStyle} ref={popup}>
+      <div className={styles.popup} style={popupStyle}>
         <Suggestions
           content={content}
           suggestions={workingOptions.map((option) =>
