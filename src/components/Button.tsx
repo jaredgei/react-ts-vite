@@ -1,5 +1,6 @@
 import styles from 'scss/Button.module.scss';
-import { ReactNode, HTMLAttributes } from 'react';
+
+import { HTMLAttributes, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
 type ButtonProps = HTMLAttributes<HTMLElement> & {

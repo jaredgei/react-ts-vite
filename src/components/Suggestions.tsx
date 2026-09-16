@@ -1,4 +1,5 @@
 import styles from 'scss/Suggestions.module.scss';
+
 import { MouseEvent, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 

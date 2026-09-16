@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { renderHook } from '@testing-library/react';
 import { createRef } from 'react';
+import { renderHook } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 
 import { useElementRect } from 'hooks/useElementRect';
 

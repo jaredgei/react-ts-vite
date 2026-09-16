@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen, renderHook, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { ReactNode } from 'react';
+import { act, render, renderHook, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it } from 'vitest';
 
 import { ErrorProvider, useError } from 'context/Error';
 

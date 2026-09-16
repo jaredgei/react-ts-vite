@@ -34,8 +34,10 @@ Group imports into blocks separated by a blank line, alphabetized within each bl
 2. **React** — `react`, `react-dom`, `react-router-dom`, external packages
 3. **Context** — `context/*`
 4. **Hooks** — `hooks/*`
-5. **Components** — `components/*`
-6. **Utilities** — `utilities/*`
+5. **Pages** — `pages/*`
+6. **Components** — `components/*`
+7. **Utilities** — `utilities/*`
+8. **Assets** — `assets/*`
 
 ```tsx
 import 'scss/App.scss';
@@ -46,9 +48,13 @@ import { useError } from 'context/Error';
 
 import { useViewportTracker } from 'hooks/useViewportTracker';
 
+import Home from 'pages/Home';
+
 import Button from 'components/Button';
 
-import { isValidEmail } from 'utilities/helpers';
+import { isValidEmail } from 'utilities/validation';
+
+import caret from 'assets/caret.svg';
 ```
 
 ## Styles
@@ -66,28 +72,7 @@ import { isValidEmail } from 'utilities/helpers';
 - No unsafe casts. Never `as unknown as X`. A single proven `as` is a last resort.
 - Never disable a lint rule inline. Fix the underlying issue.
 - Don't name a variable used only once; inline it. Keep a name only when reused, memoized, or when it genuinely aids readability.
-- Always `async`/`await`, never `.then()`/`.catch()`/`.finally()` chains (except tests). For a fetch in `useEffect`, define a named `async` function, call it, and guard state updates against unmount:
-
-  ```tsx
-  useEffect(() => {
-    let active = true;
-    const load = async () => {
-      try {
-        const res = (await get('/views/thing', { id })) as Thing;
-        if (active) setThing(res);
-      } catch (err) {
-        if (active) setError(getErrorMessage(err));
-      } finally {
-        if (active) setLoading(false);
-      }
-    };
-    load();
-    return () => {
-      active = false;
-    };
-  }, [id]);
-  ```
-
+- Always `async`/`await`, never `.then()`/`.catch()`/`.finally()` chains (except tests).
 - Use modern ES6+: `const`/`let` (never `var`), arrow functions, template literals, destructuring, spread/rest, default params, `?.`, `??`, and array/object methods over manual loops where they read clearly.
 
 ## Dependencies

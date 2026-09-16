@@ -1,4 +1,5 @@
 import styles from 'scss/Modal.module.scss';
+
 import { ReactNode } from 'react';
 
 type Props = {

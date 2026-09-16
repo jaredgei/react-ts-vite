@@ -1,7 +1,8 @@
 import js from '@eslint/js';
-import globals from 'globals';
 import prettier from 'eslint-config-prettier';
 import reactHooks from 'eslint-plugin-react-hooks';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
@@ -15,6 +16,7 @@ export default tseslint.config(
     },
     plugins: {
       'react-hooks': reactHooks,
+      'simple-import-sort': simpleImportSort,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -22,6 +24,23 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': 'off',
       quotes: ['error', 'single', { avoidEscape: true }],
       'jsx-quotes': ['error', 'prefer-single'],
+      'simple-import-sort/imports': [
+        'error',
+        {
+          groups: [
+            ['^.+\\.s?css$'],
+            ['^react', '^@?\\w'],
+            ['^context(/.*|$)'],
+            ['^hooks(/.*|$)'],
+            ['^pages(/.*|$)'],
+            ['^components(/.*|$)'],
+            ['^utilities(/.*|$)'],
+            ['^assets(/.*|$)'],
+            ['^\\.'],
+          ],
+        },
+      ],
+      'simple-import-sort/exports': 'error',
     },
   },
 );

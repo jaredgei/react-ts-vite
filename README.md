@@ -22,7 +22,7 @@ npm install
 npm run dev
 ```
 
-The dev server runs on `http://localhost:5173` and proxies `/api` to `http://localhost:8001` (configurable in `vite.config.ts`).
+The dev server runs on `http://localhost:5173`.
 
 ## Scripts
 
@@ -42,6 +42,7 @@ The dev server runs on `http://localhost:5173` and proxies `/api` to `http://loc
 
 ```
 src/
+  assets/        Static assets (icons, illustrations)
   components/    Reusable UI (Button, Modal, Dropdown, Toggle, Spinner, ...)
   context/       React context providers (Error)
   hooks/         Custom hooks (useViewportTracker, useElementRect)

@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import { isValidEmail } from 'utilities/helpers';
+import { isValidEmail } from 'utilities/validation';
 
 describe('isValidEmail', () => {
   it('accepts valid addresses', () => {

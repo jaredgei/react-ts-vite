@@ -1,5 +1,6 @@
 import styles from 'scss/Dropdown.module.scss';
-import React, { useCallback, useEffect, useState, useRef, ReactNode } from 'react';
+
+import React, { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 import { useElementRect } from 'hooks/useElementRect';
 

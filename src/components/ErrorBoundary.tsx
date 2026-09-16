@@ -1,4 +1,5 @@
 import styles from 'scss/ErrorBoundary.module.scss';
+
 import { Component, ErrorInfo, ReactNode } from 'react';
 
 import Button from 'components/Button';

@@ -1,4 +1,5 @@
 import styles from 'scss/ErrorBoundary.module.scss';
+
 import { isRouteErrorResponse, useRouteError } from 'react-router-dom';
 
 import Button from 'components/Button';

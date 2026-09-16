@@ -1,4 +1,5 @@
 import 'scss/App.scss';
+
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 
 import { useError } from 'context/Error';
