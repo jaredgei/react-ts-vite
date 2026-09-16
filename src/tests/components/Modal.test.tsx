@@ -35,4 +35,15 @@ describe('Modal', () => {
     await userEvent.click(screen.getByText('Modal body'));
     expect(onClose).not.toHaveBeenCalled();
   });
+
+  it('calls onClose when the escape key is pressed', async () => {
+    const onClose = vi.fn();
+    render(
+      <Modal onClose={onClose}>
+        <p>Modal body</p>
+      </Modal>,
+    );
+    await userEvent.keyboard('{Escape}');
+    expect(onClose).toHaveBeenCalledOnce();
+  });
 });

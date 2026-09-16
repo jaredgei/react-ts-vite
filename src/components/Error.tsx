@@ -2,12 +2,8 @@ import styles from 'scss/Error.module.scss';
 
 import { useError } from 'context/Error';
 
-type Props = {
-  error: Error | null;
-};
-
-const Error = ({ error }: Props) => {
-  const { setError } = useError();
+const Error = () => {
+  const { error, setError } = useError();
 
   return (
     <div className={`${styles.error} ${error ? styles.hasError : ''}`.trim()}>

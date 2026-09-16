@@ -3,6 +3,7 @@ import styles from 'scss/Dropdown.module.scss';
 import React, { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 import { useElementRect } from 'hooks/useElementRect';
+import { useKeyPressed } from 'hooks/useKeyPressed';
 
 import Suggestions from 'components/Suggestions';
 
@@ -33,21 +34,22 @@ type Props = {
 const Dropdown = ({ title, value, content, options, customButton, anchorPosition = 'top left', isActive, hasError }: Props) => {
   const dropdown = useRef<HTMLDivElement>(null);
 
-  const [workingOptions, setWorkingOptions] = useState<Option[]>(options || []);
+  const [activeChildren, setActiveChildren] = useState<Option[] | null>(null);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const dropdownRect = useElementRect(dropdown, isExpanded);
 
-  const [prevOptions, setPrevOptions] = useState<Option[] | undefined>(options);
-  if (options !== prevOptions) {
-    setPrevOptions(options);
-    setWorkingOptions(options || []);
-  }
+  const currentOptions = activeChildren ?? options ?? [];
 
   useEffect(() => {
     if (isExpanded) return;
-    const resetAfterCloseAnimation = setTimeout(() => setWorkingOptions(options || []), ANIMATION_MS);
+    const resetAfterCloseAnimation = setTimeout(() => setActiveChildren(null), ANIMATION_MS);
     return () => clearTimeout(resetAfterCloseAnimation);
-  }, [isExpanded, options]);
+  }, [isExpanded]);
+
+  const close = useCallback(() => {
+    if (isExpanded) setIsExpanded(false);
+  }, [isExpanded]);
+  useKeyPressed('Escape', close);
 
   const handleClickOutside = useCallback(
     (event: MouseEvent) => {
@@ -72,7 +74,7 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
   }, []);
 
   const onOptionSelect = useCallback((option: Option) => {
-    if (option.children) return setWorkingOptions(option.children);
+    if (option.children) return setActiveChildren(option.children);
     setIsExpanded(false);
     if (option.onSelect) option.onSelect();
   }, []);
@@ -88,7 +90,19 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
   return (
     <div ref={dropdown} className={`${styles.dropdown} ${isExpanded ? styles.expanded : ''}`.trim()}>
       {!customButton && (
-        <div className={`${styles.dropdownContainer} ${isActive ? styles.active : ''} ${hasError ? styles.error : ''}`.trim()} onClick={expand}>
+        <div
+          role='combobox'
+          aria-expanded={isExpanded}
+          aria-haspopup='listbox'
+          tabIndex={0}
+          className={`${styles.dropdownContainer} ${isActive ? styles.active : ''} ${hasError ? styles.error : ''}`.trim()}
+          onClick={expand}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              setIsExpanded((prev) => !prev);
+            }
+          }}>
           <div className={styles.dropdownTitle}>
             <div className={styles.dropdownTitleValue}>{value || title}</div>
           </div>
@@ -96,14 +110,26 @@ const Dropdown = ({ title, value, content, options, customButton, anchorPosition
         </div>
       )}
       {customButton && (
-        <div className={styles.dropdownContainerCustom} onClick={expand}>
+        <div
+          role='combobox'
+          aria-expanded={isExpanded}
+          aria-haspopup='listbox'
+          tabIndex={0}
+          className={styles.dropdownContainerCustom}
+          onClick={expand}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              setIsExpanded((prev) => !prev);
+            }
+          }}>
           {customButton}
         </div>
       )}
-      <div className={styles.popup} style={popupStyle}>
+      <div role='listbox' className={styles.popup} style={popupStyle}>
         <Suggestions
           content={content}
-          suggestions={workingOptions.map((option) =>
+          suggestions={currentOptions.map((option) =>
             option.name
               ? {
                   name: option.name,

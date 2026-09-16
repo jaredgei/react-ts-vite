@@ -2,8 +2,6 @@ import 'scss/App.scss';
 
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 
-import { useError } from 'context/Error';
-
 import Home from 'pages/Home';
 import NotFound from 'pages/NotFound';
 
@@ -12,11 +10,10 @@ import Header from 'components/Header';
 import RouteError from 'components/RouteError';
 
 const Layout = () => {
-  const { error } = useError();
   return (
     <div className='app'>
       <Header />
-      <Error error={error} />
+      <Error />
       <div className='page'>
         <Outlet />
       </div>

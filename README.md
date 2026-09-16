@@ -42,16 +42,16 @@ The dev server runs on `http://localhost:5173`.
 
 ```
 src/
-  assets/        Static assets (icons, illustrations)
-  components/    Reusable UI (Button, Modal, Dropdown, Toggle, Spinner, ...)
-  context/       React context providers (Error)
-  hooks/         Custom hooks (useViewportTracker, useElementRect)
-  pages/         Routed pages (Home, NotFound)
-  scss/          Global styles, tokens/mixins (Variables), and *.module.scss
-  tests/         Vitest tests, mirroring the source layout
-  utilities/     Helpers, icons, and createSafeContext
-  App.tsx        Router setup
-  main.tsx       App entry, wrapped in ErrorBoundary + ErrorProvider
+  assets/        Static assets
+  components/    Reusable UI components
+  context/       React context providers
+  hooks/         Custom React hooks
+  pages/         Routed page views
+  scss/          Global styles, design tokens, mixins, and CSS modules
+  tests/         Vitest test suites, mirroring the source layout
+  utilities/     Shared helpers, tools, and utility modules
+  App.tsx        Router configuration
+  main.tsx       Application entry point
 ```
 
 Imports use a `src`-relative alias (defined by `paths` in `tsconfig.json` and honored by Vite), so modules are imported as `components/Button`, `hooks/useViewportTracker`, `scss/App.scss`, etc.
@@ -60,7 +60,7 @@ Imports use a `src`-relative alias (defined by `paths` in `tsconfig.json` and ho
 
 - **Type-safe context** — `createSafeContext` builds a context plus a hook that throws a clear error when used outside its provider.
 - **Layered error handling** — a real `ErrorBoundary` (catches render crashes), a `RouteError` element for thrown route errors, a `NotFound` page for unmatched routes, and an `Error` notification channel backed by context.
-- **Viewport-aware hooks** — `useViewportTracker` (a single shared scroll/resize store via `useSyncExternalStore`) and `useElementRect` for measuring elements.
+- **Performant global hooks** — `useViewportTracker` (shared scroll/resize store via `useSyncExternalStore`), `useElementRect` for measuring elements, and `useKeyPressed` (centralized keydown bus).
 - **SCSS modules with tokens** — colors, spacing, fonts, radii, z-indexes, durations, and a `$blur` glass effect live in `scss/Variables.scss`, alongside `responsive` and `cover` mixins.
 
 ## Testing

@@ -24,9 +24,7 @@ const Suggestions = ({ content, suggestions, filter }: Props) => {
     suggestion.onSelect();
   };
 
-  const filteredSuggestions = (suggestions || []).filter(
-    (suggestion) => !filter || suggestion.name?.toLowerCase().indexOf(filter.toLowerCase()) !== -1,
-  );
+  const filteredSuggestions = (suggestions || []).filter((suggestion) => !filter || suggestion.name?.toLowerCase().includes(filter.toLowerCase()));
   return (
     <div className={styles.suggestions}>
       {content}
