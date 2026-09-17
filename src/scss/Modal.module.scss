@@ -1,24 +1,67 @@
 @use 'sass:color';
 @use './Variables' as *;
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .modal {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: color.adjust($black, $alpha: -0.55);
-  backdrop-filter: $blur;
+  right: 0;
+  bottom: 0;
+  background: color.adjust($black, $alpha: -0.5);
+  backdrop-filter: blur(4px);
+  z-index: $high_z_index + 1;
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: $high_z_index;
+  align-items: center;
+  padding: $medium_spacing;
+  opacity: 1;
+  animation: fadeIn $animation_duration ease-in-out;
+  transition: opacity $animation_duration ease-in-out;
+
+  &.closing {
+    opacity: 0;
+    pointer-events: none;
+
+    .modalContent {
+      transform: scale(0.92) translateY(12px);
+    }
+  }
 }
 
 .modalContent {
   background: $white;
   border-radius: $standard_border_radius;
-  padding: $medium_spacing;
+  box-shadow: $standard_box_shadow;
+  padding: $large_spacing;
   width: 100%;
   max-width: 600px;
+  max-height: calc(100vh - 2 * $large_spacing);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  transform: none;
+  animation: popIn $animation_duration cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform $animation_duration cubic-bezier(0.34, 1.56, 0.64, 1);
 }

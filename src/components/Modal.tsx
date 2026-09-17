@@ -1,8 +1,11 @@
 import styles from 'scss/Modal.module.scss';
 
-import { ReactNode } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { useKeyPressed } from 'hooks/useKeyPressed';
+
+const ANIMATION_MS = 200;
 
 type Props = {
   onClose: () => void;
@@ -10,14 +13,27 @@ type Props = {
 };
 
 const Modal = ({ onClose, children }: Props) => {
-  useKeyPressed('Escape', onClose);
+  const [isClosing, setIsClosing] = useState(false);
 
-  return (
-    <div className={styles.modal} role='dialog' aria-modal='true' onClick={onClose}>
+  const handleClose = useCallback(() => {
+    if (!isClosing) setIsClosing(true);
+  }, [isClosing]);
+
+  useEffect(() => {
+    if (!isClosing) return;
+    const timeout = setTimeout(onClose, ANIMATION_MS);
+    return () => clearTimeout(timeout);
+  }, [isClosing, onClose]);
+
+  useKeyPressed('Escape', handleClose);
+
+  return createPortal(
+    <div className={`${styles.modal} ${isClosing ? styles.closing : ''}`.trim()} role='dialog' aria-modal='true' onClick={handleClose}>
       <div className={styles.modalContent} onClick={(event) => event.stopPropagation()}>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 

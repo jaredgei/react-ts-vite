@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -14,15 +14,17 @@ describe('Modal', () => {
     expect(screen.getByText('Modal body')).toBeInTheDocument();
   });
 
-  it('calls onClose when the backdrop is clicked', async () => {
+  it('calls onClose after animation when the backdrop is clicked', async () => {
     const onClose = vi.fn();
-    const { container } = render(
+    render(
       <Modal onClose={onClose}>
         <p>Modal body</p>
       </Modal>,
     );
-    await userEvent.click(container.firstChild as Element);
-    expect(onClose).toHaveBeenCalledOnce();
+    const dialog = screen.getByRole('dialog');
+    await userEvent.click(dialog);
+    expect(dialog.className).toContain('closing');
+    await waitFor(() => expect(onClose).toHaveBeenCalledOnce());
   });
 
   it('does not call onClose when the content is clicked', async () => {
@@ -36,7 +38,7 @@ describe('Modal', () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
-  it('calls onClose when the escape key is pressed', async () => {
+  it('calls onClose after animation when the escape key is pressed', async () => {
     const onClose = vi.fn();
     render(
       <Modal onClose={onClose}>
@@ -44,6 +46,6 @@ describe('Modal', () => {
       </Modal>,
     );
     await userEvent.keyboard('{Escape}');
-    expect(onClose).toHaveBeenCalledOnce();
+    await waitFor(() => expect(onClose).toHaveBeenCalledOnce());
   });
 });
