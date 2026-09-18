@@ -1,0 +1,22 @@
+@use './Variables' as *;
+
+.verticalMenu {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $tiny_spacing;
+  cursor: pointer;
+  opacity: 0.6;
+  border-radius: $standard_border_radius;
+  transition: opacity $animation_duration;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover,
+  &.expanded {
+    opacity: 1;
+  }
+}

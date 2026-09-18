@@ -1,46 +1,50 @@
-import { MemoryRouter } from 'react-router-dom';
+import { useRef } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import Suggestions from 'components/Suggestions';
 
-const renderWithRouter = (ui: React.ReactNode) => render(<MemoryRouter>{ui}</MemoryRouter>);
-
 describe('Suggestions', () => {
-  it('renders a button suggestion and fires onSelect on click', async () => {
+  it('renders an option and fires onSelect on click', async () => {
     const onSelect = vi.fn();
-    renderWithRouter(<Suggestions suggestions={[{ name: 'Alpha', onSelect }]} />);
-    await userEvent.click(screen.getByRole('button', { name: 'Alpha' }));
+    render(<Suggestions options={[{ name: 'Alpha', onSelect }]} />);
+    await userEvent.click(screen.getByRole('option', { name: 'Alpha' }));
     expect(onSelect).toHaveBeenCalledOnce();
   });
 
-  it('renders a link suggestion when a uri is given', () => {
-    renderWithRouter(<Suggestions suggestions={[{ name: 'Docs', uri: '/docs' }]} />);
-    expect(screen.getByRole('link', { name: 'Docs' })).toHaveAttribute('href', '/docs');
+  it('does not fire onSelect when an option is disabled', async () => {
+    const onSelect = vi.fn();
+    render(<Suggestions options={[{ name: 'Disabled Item', disabled: true, onSelect }]} />);
+    await userEvent.click(screen.getByRole('option', { name: 'Disabled Item' }));
+    expect(onSelect).not.toHaveBeenCalled();
   });
 
   it('renders a divider for a nameless suggestion', () => {
-    const { container } = renderWithRouter(<Suggestions suggestions={[{}]} />);
+    const { container } = render(<Suggestions options={[{}]} />);
     expect(container.querySelector('div > div')).toBeInTheDocument();
   });
 
-  it('filters suggestions case-insensitively', () => {
-    renderWithRouter(
-      <Suggestions
-        filter='al'
-        suggestions={[
-          { name: 'Alpha', onSelect: () => {} },
-          { name: 'Beta', onSelect: () => {} },
-        ]}
-      />,
-    );
-    expect(screen.getByText('Alpha')).toBeInTheDocument();
-    expect(screen.queryByText('Beta')).not.toBeInTheDocument();
+  it('renders provided content', () => {
+    render(<Suggestions content={<div>header</div>} options={[]} />);
+    expect(screen.getByText('header')).toBeInTheDocument();
   });
 
-  it('renders provided content', () => {
-    renderWithRouter(<Suggestions content={<div>header</div>} suggestions={[]} />);
-    expect(screen.getByText('header')).toBeInTheDocument();
+  it('renders anchored suggestions that can be interacted with', async () => {
+    const onSelect = vi.fn();
+    const Harness = () => {
+      const anchor = useRef<HTMLDivElement>(null);
+      return (
+        <div>
+          <div ref={anchor} data-testid='anchor' />
+          <Suggestions anchor={anchor} isOpen options={[{ name: 'Item', onSelect }]} />
+        </div>
+      );
+    };
+    render(<Harness />);
+    const option = screen.getByRole('option', { name: 'Item' });
+    expect(option).toBeVisible();
+    await userEvent.click(option);
+    expect(onSelect).toHaveBeenCalledOnce();
   });
 });

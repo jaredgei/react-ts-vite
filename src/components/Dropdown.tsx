@@ -1,146 +1,52 @@
 import styles from 'scss/Dropdown.module.scss';
 
-import React, { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { ReactNode, useId, useRef, useState } from 'react';
 
-import { useElementRect } from 'hooks/useElementRect';
-import { useKeyPressed } from 'hooks/useKeyPressed';
+import Suggestions, { Option } from 'components/Suggestions';
 
-import Suggestions from 'components/Suggestions';
-
-import { caret, forward } from 'utilities/icons';
-
-const ANIMATION_MS = 200;
-const POPUP_WIDTH = 180;
-const POPUP_GAP = 8;
-
-type Option = {
-  name?: string;
-  onSelect?: () => void;
-  uri?: string;
-  children?: Option[];
-};
+import { caret } from 'utilities/icons';
 
 type Props = {
   title?: string;
   value?: string;
   content?: ReactNode;
   options?: Option[];
-  customButton?: ReactNode;
-  anchorPosition?: string;
   isActive?: boolean;
   hasError?: boolean;
+  className?: string;
 };
 
-const Dropdown = ({ title, value, content, options, customButton, anchorPosition = 'top left', isActive, hasError }: Props) => {
+const Dropdown = ({ title, value, content, options, isActive, hasError, className }: Props) => {
   const dropdown = useRef<HTMLDivElement>(null);
-
-  const [activeChildren, setActiveChildren] = useState<Option[] | null>(null);
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const dropdownRect = useElementRect(dropdown, isExpanded);
-
-  const currentOptions = activeChildren ?? options ?? [];
-
-  useEffect(() => {
-    if (isExpanded) return;
-    const resetAfterCloseAnimation = setTimeout(() => setActiveChildren(null), ANIMATION_MS);
-    return () => clearTimeout(resetAfterCloseAnimation);
-  }, [isExpanded]);
-
-  const close = useCallback(() => {
-    if (isExpanded) setIsExpanded(false);
-  }, [isExpanded]);
-  useKeyPressed('Escape', close);
-
-  const handleClickOutside = useCallback(
-    (event: MouseEvent) => {
-      if (!dropdown.current || (event.target instanceof Node && dropdown.current.contains(event.target)) || !isExpanded) return;
-      setIsExpanded(false);
-    },
-    [isExpanded],
-  );
-
-  useEffect(() => {
-    if (!isExpanded) return;
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isExpanded, handleClickOutside]);
-
-  const expand = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsExpanded((prev) => !prev);
-  }, []);
-
-  const onOptionSelect = useCallback((option: Option) => {
-    if (option.children) return setActiveChildren(option.children);
-    setIsExpanded(false);
-    if (option.onSelect) option.onSelect();
-  }, []);
-
-  const popupStyle: { width: number; top?: number; left?: number; right?: number; bottom?: number } = { width: POPUP_WIDTH };
-  if (dropdownRect) {
-    if (anchorPosition.includes('left')) popupStyle.left = dropdownRect.x;
-    if (anchorPosition.includes('right')) popupStyle.right = window.innerWidth - dropdownRect.x - dropdownRect.width;
-    if (anchorPosition.includes('top')) popupStyle.top = dropdownRect.y + dropdownRect.height + POPUP_GAP;
-    if (anchorPosition.includes('bottom')) popupStyle.bottom = window.innerHeight - dropdownRect.y - dropdownRect.height;
-  }
+  const [isExpanded, setIsExpanded] = useState(false);
+  const listboxId = useId();
 
   return (
-    <div ref={dropdown} className={`${styles.dropdown} ${isExpanded ? styles.expanded : ''}`.trim()}>
-      {!customButton && (
-        <div
-          role='combobox'
-          aria-expanded={isExpanded}
-          aria-haspopup='listbox'
-          tabIndex={0}
-          className={`${styles.dropdownContainer} ${isActive ? styles.active : ''} ${hasError ? styles.error : ''}`.trim()}
-          onClick={expand}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-              event.preventDefault();
-              setIsExpanded((prev) => !prev);
-            }
-          }}>
-          <div className={styles.dropdownTitle}>
-            <div className={styles.dropdownTitleValue}>{value || title}</div>
-          </div>
-          {caret}
+    <div ref={dropdown} className={`${styles.dropdown} ${className ?? ''}`.trim()}>
+      <div
+        role='combobox'
+        aria-expanded={isExpanded}
+        aria-haspopup='listbox'
+        aria-controls={listboxId}
+        tabIndex={0}
+        className={`${styles.dropdownContainer} ${isActive ? styles.active : ''} ${hasError ? styles.error : ''}`.trim()}
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          setIsExpanded((prev) => !prev);
+        }}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setIsExpanded((prev) => !prev);
+          }
+        }}>
+        <div className={styles.dropdownTitle}>
+          <div className={styles.dropdownTitleValue}>{value || title}</div>
         </div>
-      )}
-      {customButton && (
-        <div
-          role='combobox'
-          aria-expanded={isExpanded}
-          aria-haspopup='listbox'
-          tabIndex={0}
-          className={styles.dropdownContainerCustom}
-          onClick={expand}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-              event.preventDefault();
-              setIsExpanded((prev) => !prev);
-            }
-          }}>
-          {customButton}
-        </div>
-      )}
-      <div role='listbox' className={styles.popup} style={popupStyle}>
-        <Suggestions
-          content={content}
-          suggestions={currentOptions.map((option) =>
-            option.name
-              ? {
-                  name: option.name,
-                  onSelect: () => onOptionSelect(option),
-                  uri: option.uri,
-                  icon: option.children ? forward : undefined,
-                }
-              : {},
-          )}
-        />
+        {caret}
       </div>
+      <Suggestions id={listboxId} anchor={dropdown} isOpen={isExpanded} onClose={() => setIsExpanded(false)} content={content} options={options} />
     </div>
   );
 };

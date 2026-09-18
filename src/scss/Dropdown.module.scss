@@ -4,11 +4,6 @@
   position: relative;
 }
 
-.dropdownContainerCustom {
-  cursor: pointer;
-  user-select: none;
-}
-
 .dropdownContainer {
   height: $input_height;
   padding: $small_spacing;
@@ -54,20 +49,4 @@
 .dropdownTitleValue {
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.popup {
-  position: fixed;
-  margin: auto;
-  z-index: $high_z_index + 1;
-  max-height: 0;
-  border-radius: $standard_border_radius;
-  box-shadow: $standard_box_shadow;
-  overflow: hidden;
-  overflow-y: auto;
-  transition: max-height $animation_duration;
-}
-
-.expanded .popup {
-  max-height: 280px;
 }
