@@ -24,6 +24,10 @@ npm run dev
 
 The dev server runs on `http://localhost:5173`.
 
+## Backend proxy
+
+The Vite dev server proxies requests starting with `/api` to a backend at `http://localhost:8008` (configured in `vite.config.ts` under `server.proxy`). This keeps API calls same-origin, so session cookies work without CORS. Make sure the `target` port matches the port your backend actually listens on, and update it if either side changes.
+
 ## Scripts
 
 | Script                 | Description                          |

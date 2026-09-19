@@ -8,6 +8,14 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8008',
+        changeOrigin: true,
+      },
+    },
+  },
   css: {
     postcss: {
       plugins: [autoprefixer()],
