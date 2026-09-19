@@ -1,0 +1,10 @@
+@use './Variables' as *;
+
+.userSettings {
+  height: calc(100vh - $header_height);
+  padding: $medium_spacing;
+
+  h1 {
+    margin: 0;
+  }
+}

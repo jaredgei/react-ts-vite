@@ -66,6 +66,7 @@ Imports use a `src`-relative alias (defined by `paths` in `tsconfig.json` and ho
 - **Layered error handling** — a real `ErrorBoundary` (catches render crashes), a `RouteError` element for thrown route errors, a `NotFound` page for unmatched routes, and an `Error` notification channel backed by context.
 - **Performant global hooks** — `useViewportTracker` (shared scroll/resize store via `useSyncExternalStore`), `useElementRect` for measuring elements, and `useKeyPressed` (centralized keydown bus).
 - **SCSS modules with tokens** — colors, spacing, fonts, radii, z-indexes, durations, and a `$blur` glass effect live in `scss/Variables.scss`, alongside `responsive` and `cover` mixins.
+- **Session authentication** — an `AuthProvider`/`useAuth` context backed by a small `fetch` wrapper in `utilities/api` (`get`/`post`, `credentials: 'include'`, normalized errors). It bootstraps the current user from the backend, exposes `login`/`register`/`logout`, and drives a guarded routing pattern in `App.tsx`: `/` swaps between `Home` and `Dashboard`, guest-only routes (`/login`, `/register`) and protected routes (`/settings`) redirect based on auth state. Guards are UX only — the backend session enforces access on every request.
 
 ## Testing
 

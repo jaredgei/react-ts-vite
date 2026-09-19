@@ -1,0 +1,24 @@
+@use './Variables' as *;
+
+.login {
+  height: calc(100vh - $header_height);
+  padding: $medium_spacing;
+
+  h1 {
+    margin: 0;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $medium_spacing;
+  max-width: 320px;
+  margin-top: $medium_spacing;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: $small_spacing;
+  }
+}

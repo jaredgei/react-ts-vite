@@ -112,7 +112,9 @@ button {
   }
 
   input[type='text'],
-  input[type='number'] {
+  input[type='number'],
+  input[type='email'],
+  input[type='password'] {
     background: color.adjust($light_gray, $lightness: 12%);
     font-family: inherit;
     color: $black;
