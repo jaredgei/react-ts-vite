@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { render, renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { createSafeContext } from 'utilities/context';
+import { createSafeContext } from '@/utilities/context';
 
 type Value = { count: number };
 

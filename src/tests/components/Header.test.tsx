@@ -1,18 +1,19 @@
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { AuthProvider } from 'context/Auth';
-import { ErrorProvider } from 'context/Error';
+import { AuthProvider } from '@/context/Auth';
+import { ErrorProvider } from '@/context/Error';
 
-import Header from 'components/Header';
+import Header from '@/components/Header';
 
-import { get, post } from 'utilities/api';
+import { get, post } from '@/utilities/api';
 
-vi.mock('utilities/api', () => ({
+vi.mock('@/utilities/api', () => ({
   get: vi.fn(),
   post: vi.fn(),
+  setUnauthorizedHandler: vi.fn(),
 }));
 
 const mockGet = vi.mocked(get);

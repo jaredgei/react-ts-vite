@@ -1,16 +1,17 @@
-import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { createMemoryRouter, RouterProvider } from 'react-router';
 import { act, render, screen, waitFor } from '@testing-library/react';
-import { routes } from 'App';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { AuthProvider } from 'context/Auth';
-import { ErrorProvider } from 'context/Error';
+import { get } from '@/utilities/api';
 
-import { get } from 'utilities/api';
+import Providers from '@/Providers';
+import { routes } from '@/routes';
 
-vi.mock('utilities/api', () => ({
+vi.mock('@/utilities/api', () => ({
   get: vi.fn(),
   post: vi.fn(),
+  setUnauthorizedHandler: vi.fn(),
+  ApiError: class extends Error {},
 }));
 
 const mockGet = vi.mocked(get);
@@ -20,11 +21,9 @@ const renderAt = async (path: string) => {
   const router = createMemoryRouter(routes, { initialEntries: [path] });
   await act(async () => {
     render(
-      <ErrorProvider>
-        <AuthProvider>
-          <RouterProvider router={router} />
-        </AuthProvider>
-      </ErrorProvider>,
+      <Providers>
+        <RouterProvider router={router} />
+      </Providers>,
     );
   });
 };
@@ -65,10 +64,10 @@ describe('App routing', () => {
     expect(await screen.findByRole('heading', { name: 'User Settings' })).toBeInTheDocument();
   });
 
-  it('redirects a protected route to / when logged out', async () => {
+  it('redirects a protected route to /login when logged out', async () => {
     mockGet.mockRejectedValue(new Error('Unauthorized'));
     await renderAt('/settings');
-    await waitFor(() => expect(screen.getByRole('heading', { name: 'Home' })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Login' })).toBeInTheDocument());
     expect(screen.queryByRole('heading', { name: 'User Settings' })).not.toBeInTheDocument();
   });
 });

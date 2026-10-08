@@ -1,8 +1,8 @@
-import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { createMemoryRouter, RouterProvider } from 'react-router';
 import { render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import RouteError from 'components/RouteError';
+import RouteError from '@/components/RouteError';
 
 const renderAtErroringRoute = (thrown: unknown) => {
   const router = createMemoryRouter([

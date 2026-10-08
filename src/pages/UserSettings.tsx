@@ -1,4 +1,4 @@
-import styles from 'scss/UserSettings.module.scss';
+import styles from '@/styles/UserSettings.module.css';
 
 const UserSettings = () => {
   return (

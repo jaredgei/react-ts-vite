@@ -1,0 +1,8 @@
+.userSettings {
+  height: 100%;
+  padding: var(--medium-spacing);
+
+  h1 {
+    margin: 0;
+  }
+}

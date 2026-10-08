@@ -1,0 +1,30 @@
+.error {
+  background: var(--red);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  height: 0;
+  width: 100%;
+  overflow: hidden;
+  z-index: var(--high-z-index);
+  transition: height var(--animation-duration);
+}
+
+.errorMessage {
+  flex: 1;
+  padding: 0 var(--large-spacing);
+}
+
+.closeError {
+  font-size: var(--large-font);
+  line-height: 1em;
+  padding: 0 var(--large-spacing);
+  height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.hasError {
+  height: 48px;
+}

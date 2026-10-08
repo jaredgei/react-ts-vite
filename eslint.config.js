@@ -1,46 +1,56 @@
 import js from '@eslint/js';
+import { defineConfig, globalIgnores } from 'eslint/config';
 import prettier from 'eslint-config-prettier';
 import reactHooks from 'eslint-plugin-react-hooks';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
-  { ignores: ['dist'] },
+export default defineConfig(
+  globalIgnores(['dist']),
   {
-    extends: [js.configs.recommended, ...tseslint.configs.recommended, prettier],
-    files: ['**/*.{ts,tsx,js,jsx}'],
+    files: ['**/*.{ts,tsx}'],
+    extends: [js.configs.recommended, tseslint.configs.recommendedTypeChecked, reactHooks.configs.flat['recommended-latest'], prettier],
     languageOptions: {
-      ecmaVersion: 2020,
       globals: globals.browser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     plugins: {
-      'react-hooks': reactHooks,
       'simple-import-sort': simpleImportSort,
     },
     rules: {
-      ...reactHooks.configs.recommended.rules,
-      semi: ['error', 'always'],
-      '@typescript-eslint/no-unused-vars': 'off',
-      quotes: ['error', 'single', { avoidEscape: true }],
-      'jsx-quotes': ['error', 'prefer-single'],
       'simple-import-sort/imports': [
         'error',
         {
           groups: [
-            ['^.+\\.s?css$'],
+            ['\\.css$'],
             ['^react', '^@?\\w'],
-            ['^context(/.*|$)'],
-            ['^hooks(/.*|$)'],
-            ['^pages(/.*|$)'],
-            ['^components(/.*|$)'],
-            ['^utilities(/.*|$)'],
-            ['^assets(/.*|$)'],
-            ['^\\.'],
+            ['^@/context(/|$)'],
+            ['^@/hooks(/|$)'],
+            ['^@/pages(/|$)'],
+            ['^@/components(/|$)'],
+            ['^@/utilities(/|$)'],
+            ['^@/'],
           ],
         },
       ],
       'simple-import-sort/exports': 'error',
+    },
+  },
+  {
+    files: ['*.{js,ts}'],
+    extends: [tseslint.configs.disableTypeChecked],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
+  {
+    files: ['src/tests/**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/require-await': 'off',
     },
   },
 );

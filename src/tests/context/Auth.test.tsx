@@ -1,14 +1,15 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { act, render, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { AuthProvider, useAuth } from 'context/Auth';
+import { AuthProvider, useAuth } from '@/context/Auth';
 
-import { get, post } from 'utilities/api';
+import { get, post } from '@/utilities/api';
 
-vi.mock('utilities/api', () => ({
+vi.mock('@/utilities/api', () => ({
   get: vi.fn(),
   post: vi.fn(),
+  setUnauthorizedHandler: vi.fn(),
 }));
 
 const mockGet = vi.mocked(get);

@@ -1,9 +1,9 @@
-import styles from 'scss/Button.module.scss';
+import styles from '@/styles/Button.module.css';
 
-import { HTMLAttributes, ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import { Link } from 'react-router';
 
-type ButtonProps = HTMLAttributes<HTMLElement> & {
+type ButtonProps = Omit<ButtonHTMLAttributes<HTMLElement>, 'type'> & {
   text: string;
   icon?: ReactNode;
   url?: string;
@@ -13,32 +13,32 @@ type ButtonProps = HTMLAttributes<HTMLElement> & {
   disabled?: boolean;
 };
 
-const Button = ({
-  text,
-  icon,
-  url,
-  size = 'small',
-  variant = 'primary',
-  type = 'button',
-  disabled = false,
-  className = '',
-  ...props
-}: ButtonProps) => {
-  const classes = [styles.button, styles[size], styles[variant], disabled && styles.disabled, className].filter(Boolean).join(' ');
+const Button = ({ text, icon, url, size = 'small', variant = 'primary', type = 'button', disabled = false, className, ...rest }: ButtonProps) => {
+  const classes = [styles.button, size === 'small' && styles.small, styles[variant], disabled && styles.disabled, className]
+    .filter(Boolean)
+    .join(' ');
+  const content = (
+    <>
+      {icon}
+      <span className={styles.buttonText}>{text}</span>
+    </>
+  );
 
-  if (url) {
-    return (
-      <Link to={disabled ? '#' : url} className={classes} {...props}>
-        {icon}
-        <span className={styles.buttonText}>{text}</span>
+  if (url !== undefined) {
+    return disabled ? (
+      <span role='link' aria-disabled='true' className={classes} {...rest}>
+        {content}
+      </span>
+    ) : (
+      <Link to={url} className={classes} {...rest}>
+        {content}
       </Link>
     );
   }
 
   return (
-    <button type={type} disabled={disabled} className={classes} {...props}>
-      {icon}
-      <span className={styles.buttonText}>{text}</span>
+    <button type={type} disabled={disabled} className={classes} {...rest}>
+      {content}
     </button>
   );
 };

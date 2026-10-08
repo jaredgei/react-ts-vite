@@ -1,0 +1,37 @@
+:root {
+  --black: #111111;
+  --dark-gray: #222222;
+  --gray: #666666;
+  --light-gray: #dddddd;
+  --field: #eeeeee;
+  --silver: #f3f2ff;
+  --white: #ffffff;
+  --green: #2d9c62;
+  --pink: #ffdeff;
+  --blue: #5b96ff;
+  --purple: #806fd7;
+  --purple-hover: color-mix(in srgb, var(--purple), white 24%);
+  --yellow: #ffd22e;
+  --red: #ff4d58;
+
+  --tiny-spacing: 4px;
+  --small-spacing: 8px;
+  --medium-spacing: 16px;
+  --large-spacing: 24px;
+  --xlarge-spacing: 48px;
+
+  --small-font: 0.8rem;
+  --normal-font: 1rem;
+  --large-font: 1.2rem;
+
+  --header-height: 92px;
+  --app-border-radius: 32px;
+  --standard-border-radius: 16px;
+  --input-height: 40px;
+  --low-z-index: -1;
+  --high-z-index: 9999;
+  --animation-duration: 0.2s;
+  --blur: blur(12px);
+
+  --standard-box-shadow: rgb(0 0 0 / 0.2) 0 3px 1px -2px, rgb(0 0 0 / 0.14) 0 2px 2px 0, rgb(0 0 0 / 0.12) 0 1px 5px 0;
+}

@@ -1,22 +1,13 @@
-import { useEffect } from 'react';
-
-type Handler = (event: KeyboardEvent) => void;
-const listeners = new Set<Handler>();
-
-if (typeof window !== 'undefined') {
-  window.addEventListener('keydown', (event) => {
-    listeners.forEach((listener) => listener(event));
-  });
-}
+import { useEffect, useEffectEvent } from 'react';
 
 export const useKeyPressed = (targetKey: string, onKeyDown: (event: KeyboardEvent) => void) => {
+  const handler = useEffectEvent(onKeyDown);
+
   useEffect(() => {
-    const handler = (event: KeyboardEvent) => {
-      if (event.key === targetKey) onKeyDown(event);
+    const listener = (event: KeyboardEvent) => {
+      if (event.key === targetKey) handler(event);
     };
-    listeners.add(handler);
-    return () => {
-      listeners.delete(handler);
-    };
-  }, [targetKey, onKeyDown]);
+    window.addEventListener('keydown', listener);
+    return () => window.removeEventListener('keydown', listener);
+  }, [targetKey]);
 };

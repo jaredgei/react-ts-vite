@@ -2,7 +2,7 @@ import { createRef } from 'react';
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { useElementRect } from 'hooks/useElementRect';
+import { useElementRect } from '@/hooks/useElementRect';
 
 describe('useElementRect', () => {
   it('returns null when the ref is unattached', () => {

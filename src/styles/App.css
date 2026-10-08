@@ -1,0 +1,139 @@
+@import './tokens.css';
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: swap;
+  src: url('/fonts/open-sans-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 300 800;
+  font-display: swap;
+  src: url('/fonts/open-sans-latin-italic.woff2') format('woff2');
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  min-height: 100dvh;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1rem;
+  background: var(--white);
+  color: var(--dark-gray);
+}
+
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: inherit;
+}
+
+a,
+.link {
+  color: var(--purple);
+  font-weight: bold;
+  text-decoration: none;
+  transition: color var(--animation-duration);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--purple-hover);
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+}
+
+img,
+svg {
+  vertical-align: top;
+}
+
+input[type='text'],
+input[type='number'],
+input[type='email'],
+input[type='password'],
+textarea {
+  background: var(--field);
+  font-family: inherit;
+  color: var(--black);
+  padding: var(--small-spacing);
+  margin: 0;
+  border-radius: var(--standard-border-radius);
+  border: 1px solid var(--light-gray);
+  transition: border-color var(--animation-duration);
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--purple);
+  }
+
+  &[aria-invalid='true'] {
+    border-color: var(--red);
+  }
+}
+
+input[type='text'],
+input[type='number'],
+input[type='email'],
+input[type='password'] {
+  height: var(--input-height);
+}
+
+select {
+  font-family: inherit;
+  appearance: none;
+  height: var(--input-height);
+  padding: 0 calc(var(--medium-spacing) + 14px) 0 var(--small-spacing);
+  margin: 0;
+  border-radius: var(--standard-border-radius);
+  font-weight: bold;
+  border: 1px solid var(--light-gray);
+  background: var(--field) url('../assets/caret.svg') right var(--small-spacing) center / 14px 14px no-repeat;
+  color: var(--dark-gray);
+  max-width: 100%;
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--purple);
+  }
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.page {
+  flex: 1;
+}
+
+.loadingContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

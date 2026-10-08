@@ -1,10 +1,10 @@
-import styles from 'scss/Dropdown.module.scss';
+import styles from '@/styles/Dropdown.module.css';
 
-import { ReactNode, useId, useRef, useState } from 'react';
+import { type ReactNode, useId, useRef, useState } from 'react';
 
-import Suggestions, { Option } from 'components/Suggestions';
+import Suggestions, { type Option } from '@/components/Suggestions';
 
-import { caret } from 'utilities/icons';
+import { caret } from '@/utilities/icons';
 
 type Props = {
   title?: string;
@@ -17,36 +17,24 @@ type Props = {
 };
 
 const Dropdown = ({ title, value, content, options, isActive, hasError, className }: Props) => {
-  const dropdown = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
-  const listboxId = useId();
+  const menuId = useId();
 
   return (
-    <div ref={dropdown} className={`${styles.dropdown} ${className ?? ''}`.trim()}>
-      <div
-        role='combobox'
+    <div className={`${styles.dropdown} ${className ?? ''}`.trim()}>
+      <button
+        ref={trigger}
+        type='button'
+        aria-haspopup='menu'
         aria-expanded={isExpanded}
-        aria-haspopup='listbox'
-        aria-controls={listboxId}
-        tabIndex={0}
-        className={`${styles.dropdownContainer} ${isActive ? styles.active : ''} ${hasError ? styles.error : ''}`.trim()}
-        onClick={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          setIsExpanded((prev) => !prev);
-        }}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            setIsExpanded((prev) => !prev);
-          }
-        }}>
-        <div className={styles.dropdownTitle}>
-          <div className={styles.dropdownTitleValue}>{value || title}</div>
-        </div>
+        aria-controls={menuId}
+        className={`${styles.trigger} ${isActive ? styles.active : ''} ${hasError ? styles.error : ''}`.trim()}
+        onClick={() => setIsExpanded((prev) => !prev)}>
+        <span className={styles.title}>{value || title}</span>
         {caret}
-      </div>
-      <Suggestions id={listboxId} anchor={dropdown} isOpen={isExpanded} onClose={() => setIsExpanded(false)} content={content} options={options} />
+      </button>
+      <Suggestions id={menuId} anchor={trigger} isOpen={isExpanded} onClose={() => setIsExpanded(false)} content={content} options={options} />
     </div>
   );
 };

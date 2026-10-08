@@ -1,21 +1,21 @@
 # React Template
 
-An opinionated starter for React frontends: **React 19 + TypeScript + Vite**, styled with **SCSS modules**, tested with **Vitest**, and linted/formatted out of the box. It ships with a small set of commonly used hooks, contexts, components, and app patterns so a new project starts with real building blocks instead of a blank page.
+An opinionated starter for React frontends: **React 19 + TypeScript + Vite**, styled with **CSS modules** and design tokens, tested with **Vitest**, and linted/formatted out of the box. It ships with a small set of commonly used hooks, contexts, components, and app patterns so a new project starts with real building blocks instead of a blank page.
 
 ![CI](https://github.com/jaredgei/react-ts-vite/actions/workflows/ci.yml/badge.svg)
 
 ## Stack
 
-- **React 19** with `react-router-dom` v7
-- **TypeScript** in strict mode
-- **Vite** for dev/build, with a `src/`-relative import alias
-- **SCSS modules** with a shared token/mixin system, autoprefixed via PostCSS
+- **React 19** with `react-router` v7 (data router, lazy routes)
+- **TypeScript** in strict mode (`verbatimModuleSyntax`, `noUncheckedIndexedAccess`)
+- **Vite** for dev/build, with an `@/`-relative import alias
+- **CSS modules** with custom-property design tokens, compiled by **Lightning CSS** (nesting, `color-mix`, prefixing)
 - **Vitest** + **@testing-library/react** for tests
-- **ESLint** (flat config) + **Prettier**
+- **ESLint** (flat config, type-aware) + **Prettier**
 
 ## Getting started
 
-Requires Node 20+.
+Requires Node 20.19+ or 22.12+.
 
 ```bash
 npm install
@@ -51,22 +51,25 @@ src/
   context/       React context providers
   hooks/         Custom React hooks
   pages/         Routed page views
-  scss/          Global styles, design tokens, mixins, and CSS modules
+  styles/        Global styles, design tokens, and CSS modules
   tests/         Vitest test suites, mirroring the source layout
   utilities/     Shared helpers, tools, and utility modules
-  App.tsx        Router configuration
+  App.tsx        Router provider
+  Providers.tsx  Shared context/error-boundary tree
   main.tsx       Application entry point
+  routes.tsx     Route configuration (lazy-loaded pages)
 ```
 
-Imports use a `src`-relative alias (defined by `paths` in `tsconfig.json` and honored by Vite), so modules are imported as `components/Button`, `hooks/useViewportTracker`, `scss/App.scss`, etc.
+Imports use the `@/` alias (defined by `paths` in `tsconfig.json` and honored by Vite), so modules are imported as `@/components/Button`, `@/hooks/useViewportTracker`, `@/styles/App.css`, etc.
 
 ## What's included
 
 - **Type-safe context** — `createSafeContext` builds a context plus a hook that throws a clear error when used outside its provider.
-- **Layered error handling** — a real `ErrorBoundary` (catches render crashes), a `RouteError` element for thrown route errors, a `NotFound` page for unmatched routes, and an `Error` notification channel backed by context.
-- **Performant global hooks** — `useViewportTracker` (shared scroll/resize store via `useSyncExternalStore`), `useElementRect` for measuring elements, and `useKeyPressed` (centralized keydown bus).
-- **SCSS modules with tokens** — colors, spacing, fonts, radii, z-indexes, durations, and a `$blur` glass effect live in `scss/Variables.scss`, alongside `responsive` and `cover` mixins.
-- **Session authentication** — an `AuthProvider`/`useAuth` context backed by a small `fetch` wrapper in `utilities/api` (`get`/`post`, `credentials: 'include'`, normalized errors). It bootstraps the current user from the backend, exposes `login`/`register`/`logout`, and drives a guarded routing pattern in `App.tsx`: `/` swaps between `Home` and `Dashboard`, guest-only routes (`/login`, `/register`) and protected routes (`/settings`) redirect based on auth state. Guards are UX only — the backend session enforces access on every request.
+- **Layered error handling** — a real `ErrorBoundary` (catches render crashes), a `RouteError` element for thrown route errors, a `NotFound` page for unmatched routes, and an `Error` notification channel whose `showError(unknown)` normalizes any thrown value.
+- **Performant global hooks** — `useViewportTracker` (shared scroll/resize store via `useSyncExternalStore`, lazily subscribed and `requestAnimationFrame`-coalesced), `useElementRect` for measuring elements, and `useKeyPressed` built on `useEffectEvent`.
+- **Native platform UI** — `Modal` uses `<dialog>` (`showModal`, focus trapping, top layer, `::backdrop`), and `Suggestions`/`Dropdown`/`VerticalMenu` use the Popover API for light dismiss and Escape, with CSS `@starting-style` transitions.
+- **CSS modules with tokens** — colors, spacing, fonts, radii, z-indexes, durations, and a `--blur` glass effect live as custom properties in `@/styles/tokens.css`.
+- **Session authentication** — an `AuthProvider`/`useAuth` context backed by a small `fetch` wrapper in `@/utilities/api` (`get`/`post`, `credentials: 'include'`, an `ApiError` carrying the status, and a `setUnauthorizedHandler` that clears the session on any live 401). Login/Register use React 19 `<form action>` + `useActionState`. `routes.tsx` guards routes: `/` swaps `Home`/`Dashboard`, guest-only routes (`/login`, `/register`) redirect when signed in, and protected routes (`/settings`) redirect to `/login` with the attempted path in `state.from`. Guards are UX only — the backend session enforces access on every request.
 
 ## Testing
 

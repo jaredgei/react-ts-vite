@@ -1,8 +1,6 @@
-@use './Variables' as *;
-
 .register {
-  height: calc(100vh - $header_height);
-  padding: $medium_spacing;
+  height: 100%;
+  padding: var(--medium-spacing);
 
   h1 {
     margin: 0;
@@ -12,13 +10,13 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: $medium_spacing;
+  gap: var(--medium-spacing);
   max-width: 320px;
-  margin-top: $medium_spacing;
+  margin-top: var(--medium-spacing);
 
   label {
     display: flex;
     flex-direction: column;
-    gap: $small_spacing;
+    gap: var(--small-spacing);
   }
 }

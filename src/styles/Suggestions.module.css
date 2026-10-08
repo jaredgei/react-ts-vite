@@ -1,0 +1,83 @@
+.popup {
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  overflow: visible;
+  inset: unset;
+}
+
+.suggestions {
+  width: 180px;
+  max-width: calc(100vw - var(--medium-spacing));
+  max-height: 280px;
+  overflow-y: auto;
+  background: rgb(255 255 255 / 0.75);
+  backdrop-filter: var(--blur);
+  border-radius: var(--standard-border-radius);
+  box-shadow: var(--standard-box-shadow);
+  user-select: none;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity var(--animation-duration),
+    transform var(--animation-duration);
+}
+
+.popup:popover-open .suggestions,
+.inline {
+  opacity: 1;
+  transform: none;
+}
+
+.suggestion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 40px;
+  padding: 0 var(--large-spacing);
+  color: var(--dark-gray);
+  font-size: var(--small-font);
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--purple);
+    color: var(--white);
+    outline: none;
+
+    svg {
+      fill: var(--white);
+    }
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.suggestionText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.suggestionIcon {
+  display: flex;
+  align-items: center;
+  margin-left: var(--small-spacing);
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.divider {
+  height: 1px;
+  background: var(--light-gray);
+  margin: var(--small-spacing) 0;
+}

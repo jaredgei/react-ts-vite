@@ -1,5 +1,21 @@
 type QueryParams = Record<string, string | number | boolean | undefined | null>;
 
+export class ApiError extends Error {
+  constructor(
+    public status: number,
+    message: string,
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+let onUnauthorized: (() => void) | undefined;
+
+export const setUnauthorizedHandler = (handler: () => void) => {
+  onUnauthorized = handler;
+};
+
 const toQueryString = (params?: QueryParams): string => {
   if (!params) return '';
   const search = new URLSearchParams();
@@ -11,7 +27,7 @@ const toQueryString = (params?: QueryParams): string => {
 
 const parseErrors = (body: unknown): string | null => {
   if (typeof body !== 'object' || body === null || !('errors' in body)) return null;
-  const { errors } = body as { errors: unknown };
+  const { errors } = body;
   if (Array.isArray(errors)) return errors.filter((message) => typeof message === 'string').join('\n') || null;
   return typeof errors === 'string' ? errors : null;
 };
@@ -24,9 +40,12 @@ const request = async <T>(method: string, path: string, body?: unknown): Promise
     body: body === undefined ? undefined : JSON.stringify(body),
   });
 
-  const data = response.status === 204 ? null : await response.json().catch(() => null);
+  const data: unknown = response.status === 204 ? null : await response.json().catch(() => null);
 
-  if (!response.ok) throw new Error(parseErrors(data) ?? `Request failed with status ${response.status}`);
+  if (!response.ok) {
+    if (response.status === 401) onUnauthorized?.();
+    throw new ApiError(response.status, parseErrors(data) ?? `Request failed with status ${response.status}`);
+  }
 
   return data as T;
 };

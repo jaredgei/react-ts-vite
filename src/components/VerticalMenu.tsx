@@ -1,10 +1,10 @@
-import styles from 'scss/VerticalMenu.module.scss';
+import styles from '@/styles/VerticalMenu.module.css';
 
 import { useId, useRef, useState } from 'react';
 
-import Suggestions, { Option } from 'components/Suggestions';
+import Suggestions, { type Option } from '@/components/Suggestions';
 
-import { menu } from 'utilities/icons';
+import { menu } from '@/utilities/icons';
 
 type Props = {
   options: Option[];
@@ -13,27 +13,23 @@ type Props = {
 
 const VerticalMenu = ({ options, className }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const menuRef = useRef<HTMLButtonElement>(null);
-  const listboxId = useId();
+  const trigger = useRef<HTMLButtonElement>(null);
+  const menuId = useId();
 
   return (
     <>
       <button
-        ref={menuRef}
+        ref={trigger}
         type='button'
         aria-label='Options'
+        aria-haspopup='menu'
         aria-expanded={isExpanded}
-        aria-haspopup='listbox'
-        aria-controls={listboxId}
+        aria-controls={menuId}
         className={`${styles.verticalMenu} ${isExpanded ? styles.expanded : ''} ${className ?? ''}`.trim()}
-        onClick={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          setIsExpanded((prev) => !prev);
-        }}>
+        onClick={() => setIsExpanded((prev) => !prev)}>
         {menu}
       </button>
-      <Suggestions id={listboxId} anchor={menuRef} isOpen={isExpanded} onClose={() => setIsExpanded(false)} options={options} />
+      <Suggestions id={menuId} anchor={trigger} isOpen={isExpanded} onClose={() => setIsExpanded(false)} options={options} />
     </>
   );
 };

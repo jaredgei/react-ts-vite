@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import Toggle from 'components/Toggle';
+import Toggle from '@/components/Toggle';
 
 describe('Toggle', () => {
   it('reflects its value via aria-checked', () => {

@@ -1,17 +1,14 @@
-import styles from 'scss/Suggestions.module.scss';
+import styles from '@/styles/Suggestions.module.css';
 
-import { MouseEvent as ReactMouseEvent, ReactNode, RefObject, useCallback, useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { type MouseEvent, type ReactNode, type RefObject, useEffect, useRef, useState } from 'react';
 
-import { useElementRect } from 'hooks/useElementRect';
-import { useKeyPressed } from 'hooks/useKeyPressed';
+import { useElementRect } from '@/hooks/useElementRect';
 
-import { forward } from 'utilities/icons';
+import { forward } from '@/utilities/icons';
 
 const POPUP_MAX_HEIGHT = 280;
 const POPUP_GAP = 4;
 const VIEWPORT_PADDING = 8;
-const ANIMATION_MS = 200;
 
 export type Option = {
   name?: string;
@@ -33,51 +30,30 @@ type Props = {
 
 const Suggestions = ({ id, anchor, isOpen = false, onClose, content, options = [], className }: Props) => {
   const [activeChildren, setActiveChildren] = useState<Option[] | null>(null);
-  const popupRef = useRef<HTMLDivElement>(null);
+  const popup = useRef<HTMLDivElement>(null);
   const rect = useElementRect(anchor, Boolean(anchor && isOpen));
 
   useEffect(() => {
-    if (isOpen) return;
-    const reset = setTimeout(() => setActiveChildren(null), ANIMATION_MS);
-    return () => clearTimeout(reset);
-  }, [isOpen]);
+    if (anchor) popup.current?.togglePopover(isOpen);
+  }, [isOpen, anchor]);
 
-  useKeyPressed(
-    'Escape',
-    useCallback(() => {
-      if (isOpen) onClose?.();
-    }, [isOpen, onClose]),
-  );
-
-  useEffect(() => {
-    if (!isOpen || !onClose) return;
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (anchor?.current?.contains(target) || popupRef.current?.contains(target)) return;
-      onClose();
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isOpen, onClose, anchor]);
-
-  const selectOption = (event: ReactMouseEvent, option: Option) => {
+  const selectOption = (event: MouseEvent, option: Option) => {
     event.preventDefault();
-    event.stopPropagation();
     if (option.children) return setActiveChildren(option.children);
     onClose?.();
     option.onSelect?.();
   };
 
   const list = (
-    <div className={`${styles.suggestions} ${className ?? ''}`.trim()}>
+    <div role='menu' className={`${styles.suggestions} ${anchor ? '' : styles.inline} ${className ?? ''}`.trim()}>
       {content}
       {(activeChildren ?? options).map((option, index) => {
-        if (!option.name) return <div key={`divider-${index}`} className={styles.divider} />;
+        if (!option.name) return <div key={`divider-${index}`} role='separator' className={styles.divider} />;
         const icon = option.icon ?? (option.children && forward);
         return (
           <button
             type='button'
-            role='option'
+            role='menuitem'
             disabled={option.disabled}
             className={`${styles.suggestion} ${option.disabled ? styles.disabled : ''}`.trim()}
             key={option.name + index}
@@ -92,17 +68,23 @@ const Suggestions = ({ id, anchor, isOpen = false, onClose, content, options = [
 
   if (!anchor)
     return (
-      <div id={id} role='listbox'>
+      <div id={id} ref={popup}>
         {list}
       </div>
     );
 
-  return createPortal(
+  return (
     <div
       id={id}
-      ref={popupRef}
-      role='listbox'
-      className={`${styles.popup} ${isOpen ? styles.open : ''}`.trim()}
+      ref={popup}
+      popover='auto'
+      className={styles.popup}
+      onToggle={(event) => {
+        if (event.newState === 'closed') {
+          setActiveChildren(null);
+          onClose?.();
+        }
+      }}
       style={
         rect
           ? {
@@ -114,8 +96,7 @@ const Suggestions = ({ id, anchor, isOpen = false, onClose, content, options = [
           : undefined
       }>
       {list}
-    </div>,
-    document.body,
+    </div>
   );
 };
 

@@ -1,0 +1,30 @@
+.toggle {
+  user-select: none;
+  width: 64px;
+  height: 32px;
+  background-color: var(--gray);
+  border-radius: 20px;
+  border: 1px solid var(--white);
+  position: relative;
+  transition: background-color var(--animation-duration);
+  cursor: pointer;
+}
+
+.switch {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  bottom: 2px;
+  width: 27px;
+  border-radius: 50%;
+  background: var(--white);
+  transition: left var(--animation-duration);
+}
+
+.on {
+  background: var(--purple);
+
+  .switch {
+    left: 33px;
+  }
+}

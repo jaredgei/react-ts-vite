@@ -1,0 +1,7 @@
+.header {
+  min-height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--medium-spacing);
+}

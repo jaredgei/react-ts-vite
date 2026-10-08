@@ -1,0 +1,68 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--purple);
+  padding: var(--large-spacing);
+  border-radius: var(--app-border-radius);
+  color: var(--white);
+  font-weight: bold;
+  user-select: none;
+  cursor: pointer;
+  transition:
+    background-color var(--animation-duration),
+    opacity var(--animation-duration);
+
+  svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--white);
+    margin-right: var(--small-spacing);
+  }
+
+  &:hover {
+    background-color: var(--purple-hover);
+  }
+}
+
+.buttonText {
+  line-height: 1em;
+  color: var(--white);
+  text-align: center;
+}
+
+.small {
+  padding: var(--medium-spacing);
+  border-radius: var(--standard-border-radius);
+  max-height: 48px;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.secondary {
+  background-color: var(--white);
+  border: 2px solid var(--purple);
+
+  .buttonText {
+    color: var(--purple);
+  }
+
+  svg {
+    fill: var(--purple);
+  }
+
+  &:hover {
+    background-color: var(--silver);
+  }
+
+  &.disabled {
+    color: var(--gray);
+
+    svg {
+      fill: var(--gray);
+    }
+  }
+}

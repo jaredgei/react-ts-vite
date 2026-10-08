@@ -1,7 +1,7 @@
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { get, post } from 'utilities/api';
-import { createSafeContext } from 'utilities/context';
+import { get, post, setUnauthorizedHandler } from '@/utilities/api';
+import { createSafeContext } from '@/utilities/context';
 
 export type User = {
   id: string;
@@ -26,6 +26,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setUnauthorizedHandler(() => setUser(null));
     const bootstrap = async () => {
       try {
         const { user } = await get<{ user: User }>('/api/users/me');
@@ -36,7 +37,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
       }
     };
-    bootstrap();
+    void bootstrap();
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
@@ -54,7 +55,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
   }, []);
 
-  return <AuthContext value={{ user, loading, login, register, logout }}>{children}</AuthContext>;
+  const value = useMemo(() => ({ user, loading, login, register, logout }), [user, loading, login, register, logout]);
+
+  return <AuthContext value={value}>{children}</AuthContext>;
 };
 
 export { AuthProvider, useAuth };

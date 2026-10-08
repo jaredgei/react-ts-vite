@@ -1,11 +1,11 @@
-import { ReactNode, useEffect } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 
-import { ErrorProvider, useError } from 'context/Error';
+import { ErrorProvider, useError } from '@/context/Error';
 
-import Error from 'components/Error';
+import Error from '@/components/Error';
 
 const wrapper = ({ children }: { children: ReactNode }) => <ErrorProvider>{children}</ErrorProvider>;
 
@@ -17,10 +17,10 @@ describe('Error', () => {
 
   it('shows the error message when present', () => {
     const Harness = () => {
-      const { setError } = useError();
+      const { showError } = useError();
       useEffect(() => {
-        setError(new window.Error('something failed'));
-      }, [setError]);
+        showError(new window.Error('something failed'));
+      }, [showError]);
       return <Error />;
     };
     render(<Harness />, { wrapper });
@@ -29,10 +29,10 @@ describe('Error', () => {
 
   it('clears the error when the close button is clicked', async () => {
     const Harness = () => {
-      const { setError } = useError();
+      const { showError } = useError();
       return (
         <>
-          <button onClick={() => setError(new window.Error('boom'))}>trigger</button>
+          <button onClick={() => showError(new window.Error('boom'))}>trigger</button>
           <Error />
         </>
       );

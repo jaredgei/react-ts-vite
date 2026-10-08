@@ -1,6 +1,5 @@
 /// <reference types="vitest/config" />
 import react from '@vitejs/plugin-react';
-import autoprefixer from 'autoprefixer';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -17,12 +16,12 @@ export default defineConfig({
     },
   },
   css: {
-    postcss: {
-      plugins: [autoprefixer()],
-    },
+    transformer: 'lightningcss',
+  },
+  build: {
+    cssMinify: 'lightningcss',
   },
   test: {
-    globals: true,
     environment: 'jsdom',
     setupFiles: './src/tests/setup.ts',
     css: true,

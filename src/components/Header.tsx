@@ -1,19 +1,19 @@
-import styles from 'scss/Header.module.scss';
+import styles from '@/styles/Header.module.css';
 
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
-import { useAuth } from 'context/Auth';
-import { useError } from 'context/Error';
+import { useAuth } from '@/context/Auth';
+import { useError } from '@/context/Error';
 
 const Header = () => {
   const { user, logout } = useAuth();
-  const { setError } = useError();
+  const { showError } = useError();
 
   const handleLogout = async () => {
     try {
       await logout();
     } catch (error) {
-      setError(error as Error);
+      showError(error);
     }
   };
 
@@ -21,7 +21,7 @@ const Header = () => {
     <header className={styles.header}>
       <Link to='/'>Logo</Link>
       {user && (
-        <button type='button' className='fakeLink' onClick={handleLogout}>
+        <button type='button' className='link' onClick={() => void handleLogout()}>
           Logout
         </button>
       )}

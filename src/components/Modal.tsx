@@ -1,11 +1,6 @@
-import styles from 'scss/Modal.module.scss';
+import styles from '@/styles/Modal.module.css';
 
-import { ReactNode, useCallback, useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-
-import { useKeyPressed } from 'hooks/useKeyPressed';
-
-const ANIMATION_MS = 200;
+import { type MouseEvent, type ReactNode, useEffect, useRef } from 'react';
 
 type Props = {
   onClose: () => void;
@@ -13,27 +8,20 @@ type Props = {
 };
 
 const Modal = ({ onClose, children }: Props) => {
-  const [isClosing, setIsClosing] = useState(false);
-
-  const handleClose = useCallback(() => {
-    if (!isClosing) setIsClosing(true);
-  }, [isClosing]);
+  const dialog = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    if (!isClosing) return;
-    const timeout = setTimeout(onClose, ANIMATION_MS);
-    return () => clearTimeout(timeout);
-  }, [isClosing, onClose]);
+    dialog.current?.showModal();
+  }, []);
 
-  useKeyPressed('Escape', handleClose);
+  const handleClick = (event: MouseEvent<HTMLDialogElement>) => {
+    if (event.target === dialog.current) dialog.current?.close();
+  };
 
-  return createPortal(
-    <div className={`${styles.modal} ${isClosing ? styles.closing : ''}`.trim()} role='dialog' aria-modal='true' onClick={handleClose}>
-      <div className={styles.modalContent} onClick={(event) => event.stopPropagation()}>
-        {children}
-      </div>
-    </div>,
-    document.body,
+  return (
+    <dialog ref={dialog} className={styles.modal} onClose={onClose} onClick={handleClick}>
+      <div className={styles.content}>{children}</div>
+    </dialog>
   );
 };
 

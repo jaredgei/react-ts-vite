@@ -1,8 +1,8 @@
-import styles from 'scss/ErrorBoundary.module.scss';
+import styles from '@/styles/ErrorBoundary.module.css';
 
-import { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 
-import Button from 'components/Button';
+import Button from '@/components/Button';
 
 type Props = {
   children: ReactNode;
@@ -12,7 +12,6 @@ type State = {
   error: Error | null;
 };
 
-// Must be a class: React has no hook equivalent for getDerivedStateFromError/componentDidCatch.
 class ErrorBoundary extends Component<Props, State> {
   state: State = { error: null };
 

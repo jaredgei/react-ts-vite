@@ -1,4 +1,4 @@
-import styles from 'scss/Toggle.module.scss';
+import styles from '@/styles/Toggle.module.css';
 
 type Props = {
   value: boolean;

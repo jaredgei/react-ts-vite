@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { useKeyPressed } from 'hooks/useKeyPressed';
+import { useKeyPressed } from '@/hooks/useKeyPressed';
 
 describe('useKeyPressed', () => {
   it('triggers callback when target key is pressed', () => {

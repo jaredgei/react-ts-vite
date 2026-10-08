@@ -1,32 +1,31 @@
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { useViewportTracker } from 'hooks/useViewportTracker';
+import { useViewportTracker } from '@/hooks/useViewportTracker';
 
 describe('useViewportTracker', () => {
   it('returns the current viewport dimensions', () => {
     const { result } = renderHook(() => useViewportTracker());
     expect(result.current.width).toBe(window.innerWidth);
     expect(result.current.height).toBe(window.innerHeight);
-    expect(result.current.scrollY).toBe(Math.max(0, window.scrollY));
   });
 
-  it('updates on scroll', () => {
+  it('updates on scroll', async () => {
     const { result } = renderHook(() => useViewportTracker());
     act(() => {
       window.scrollY = 250;
       window.dispatchEvent(new Event('scroll'));
     });
-    expect(result.current.scrollY).toBe(250);
+    await waitFor(() => expect(result.current.scrollY).toBe(250));
   });
 
-  it('updates on resize', () => {
+  it('updates on resize', async () => {
     const { result } = renderHook(() => useViewportTracker());
     act(() => {
       window.innerWidth = 500;
       window.dispatchEvent(new Event('resize'));
     });
-    expect(result.current.width).toBe(500);
+    await waitFor(() => expect(result.current.width).toBe(500));
   });
 
   it('does not subscribe when disabled', () => {

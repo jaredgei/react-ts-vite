@@ -1,48 +1,47 @@
-import styles from 'scss/Register.module.scss';
+import styles from '@/styles/Register.module.css';
 
-import { FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useActionState } from 'react';
+import { useNavigate } from 'react-router';
 
-import { useAuth } from 'context/Auth';
-import { useError } from 'context/Error';
+import { useAuth } from '@/context/Auth';
+import { useError } from '@/context/Error';
 
-import Button from 'components/Button';
+import Button from '@/components/Button';
+
+import { field } from '@/utilities/form';
 
 const Register = () => {
   const { register } = useAuth();
-  const { setError } = useError();
+  const { showError } = useError();
   const navigate = useNavigate();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
+  const [, submit, pending] = useActionState(async (_: null, form: FormData) => {
     try {
-      await register(name, email, password);
-      navigate('/');
+      await register(field(form, 'name'), field(form, 'email'), field(form, 'password'));
+      await navigate('/', { replace: true });
     } catch (error) {
-      setError(error as Error);
+      showError(error);
     }
-  };
+    return null;
+  }, null);
 
   return (
     <div className={styles.register}>
       <h1>Register</h1>
-      <form className={styles.form} onSubmit={handleSubmit}>
+      <form className={styles.form} action={submit}>
         <label>
           Name
-          <input type='text' value={name} onChange={(event) => setName(event.target.value)} required />
+          <input type='text' name='name' required />
         </label>
         <label>
           Email
-          <input type='email' value={email} onChange={(event) => setEmail(event.target.value)} required />
+          <input type='email' name='email' required />
         </label>
         <label>
           Password
-          <input type='password' value={password} onChange={(event) => setPassword(event.target.value)} required />
+          <input type='password' name='password' required />
         </label>
-        <Button text='Register' type='submit' />
+        <Button text='Register' type='submit' disabled={pending} />
       </form>
     </div>
   );

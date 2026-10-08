@@ -1,43 +1,45 @@
-import styles from 'scss/Login.module.scss';
+import styles from '@/styles/Login.module.css';
 
-import { FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useActionState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 
-import { useAuth } from 'context/Auth';
-import { useError } from 'context/Error';
+import { useAuth } from '@/context/Auth';
+import { useError } from '@/context/Error';
 
-import Button from 'components/Button';
+import Button from '@/components/Button';
+
+import { field } from '@/utilities/form';
 
 const Login = () => {
   const { login } = useAuth();
-  const { setError } = useError();
+  const { showError } = useError();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const location = useLocation();
+  const from = (location.state as { from?: string } | null)?.from ?? '/';
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
+  const [, submit, pending] = useActionState(async (_: null, form: FormData) => {
     try {
-      await login(email, password);
-      navigate('/');
+      await login(field(form, 'email'), field(form, 'password'));
+      await navigate(from, { replace: true });
     } catch (error) {
-      setError(error as Error);
+      showError(error);
     }
-  };
+    return null;
+  }, null);
 
   return (
     <div className={styles.login}>
       <h1>Login</h1>
-      <form className={styles.form} onSubmit={handleSubmit}>
+      <form className={styles.form} action={submit}>
         <label>
           Email
-          <input type='email' value={email} onChange={(event) => setEmail(event.target.value)} required />
+          <input type='email' name='email' required />
         </label>
         <label>
           Password
-          <input type='password' value={password} onChange={(event) => setPassword(event.target.value)} required />
+          <input type='password' name='password' required />
         </label>
-        <Button text='Login' type='submit' />
+        <Button text='Login' type='submit' disabled={pending} />
       </form>
     </div>
   );

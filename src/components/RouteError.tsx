@@ -1,10 +1,10 @@
-import styles from 'scss/ErrorBoundary.module.scss';
+import styles from '@/styles/ErrorBoundary.module.css';
 
-import { isRouteErrorResponse, useRouteError } from 'react-router-dom';
+import { isRouteErrorResponse, useRouteError } from 'react-router';
 
-import Button from 'components/Button';
+import Button from '@/components/Button';
 
-import { home } from 'utilities/icons';
+import { home } from '@/utilities/icons';
 
 const RouteError = () => {
   const error = useRouteError();

@@ -1,8 +1,8 @@
-import styles from 'scss/NotFound.module.scss';
+import styles from '@/styles/NotFound.module.css';
 
-import Button from 'components/Button';
+import Button from '@/components/Button';
 
-import { home } from 'utilities/icons';
+import { home } from '@/utilities/icons';
 
 const NotFound = () => (
   <div className={styles.notFound}>

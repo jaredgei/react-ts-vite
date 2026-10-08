@@ -6,36 +6,37 @@ type Viewport = {
   height: number;
 };
 
-let viewport: Viewport = { scrollY: 0, width: 0, height: 0 };
+let viewport: Viewport = { scrollY: window.scrollY, width: window.innerWidth, height: window.innerHeight };
 const listeners = new Set<() => void>();
+let frame = 0;
 
-const update = () => {
-  viewport = {
-    scrollY: Math.max(0, window.scrollY),
-    width: window.innerWidth,
-    height: window.innerHeight,
-  };
+const flush = () => {
+  frame = 0;
+  viewport = { scrollY: Math.max(0, window.scrollY), width: window.innerWidth, height: window.innerHeight };
   listeners.forEach((listener) => listener());
 };
 
-if (typeof window !== 'undefined') {
-  update();
-  window.addEventListener('resize', update, { passive: true });
-  window.addEventListener('scroll', update, { capture: true, passive: true });
-}
+const onChange = () => {
+  if (!frame) frame = requestAnimationFrame(flush);
+};
 
 const subscribe = (callback: () => void) => {
+  if (!listeners.size) {
+    window.addEventListener('resize', onChange, { passive: true });
+    window.addEventListener('scroll', onChange, { capture: true, passive: true });
+  }
   listeners.add(callback);
-  return () => listeners.delete(callback);
+  return () => {
+    listeners.delete(callback);
+    if (!listeners.size) {
+      window.removeEventListener('resize', onChange);
+      window.removeEventListener('scroll', onChange, { capture: true });
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+    }
+  };
 };
 
 const noopSubscribe = () => () => {};
-const serverSnapshot: Viewport = { scrollY: 0, width: 0, height: 0 };
 
-export const useViewportTracker = (enabled = true) => {
-  return useSyncExternalStore(
-    enabled ? subscribe : noopSubscribe,
-    () => viewport,
-    () => serverSnapshot,
-  );
-};
+export const useViewportTracker = (enabled = true) => useSyncExternalStore(enabled ? subscribe : noopSubscribe, () => viewport);

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { get, post } from 'utilities/api';
+import { ApiError, get, post, setUnauthorizedHandler } from '@/utilities/api';
 
 const mockFetch = (body: unknown, init: { ok?: boolean; status?: number } = {}) => {
   const response = {
@@ -15,6 +15,7 @@ const mockFetch = (body: unknown, init: { ok?: boolean; status?: number } = {}) 
 
 afterEach(() => {
   vi.restoreAllMocks();
+  setUnauthorizedHandler(() => {});
 });
 
 describe('api', () => {
@@ -44,14 +45,22 @@ describe('api', () => {
     );
   });
 
-  it('throws an Error joining the backend errors array', async () => {
+  it('throws an ApiError joining the backend errors array', async () => {
     mockFetch({ errors: ['Invalid email or password'] }, { ok: false, status: 401 });
     await expect(post('/api/users/login', {})).rejects.toThrow('Invalid email or password');
   });
 
-  it('throws an Error for a string errors field', async () => {
+  it('throws an ApiError carrying the status code', async () => {
     mockFetch({ errors: 'Too many attempts, please try again later' }, { ok: false, status: 429 });
-    await expect(post('/api/users/login', {})).rejects.toThrow('Too many attempts, please try again later');
+    await expect(post('/api/users/login', {})).rejects.toMatchObject({ status: 429, name: 'ApiError' });
+  });
+
+  it('invokes the unauthorized handler on a 401', async () => {
+    const onUnauthorized = vi.fn();
+    setUnauthorizedHandler(onUnauthorized);
+    mockFetch({ errors: 'Session expired' }, { ok: false, status: 401 });
+    await expect(get('/api/users/me')).rejects.toBeInstanceOf(ApiError);
+    expect(onUnauthorized).toHaveBeenCalledOnce();
   });
 
   it('falls back to the status when the error body is unusable', async () => {

@@ -1,6 +1,3 @@
-@use 'sass:color';
-@use './Variables' as *;
-
 @keyframes spin {
   100% {
     transform: rotate(360deg);
@@ -11,19 +8,19 @@
   animation: spin 1s infinite linear;
   border: solid 12px transparent;
   border-radius: 50%;
-  border-right-color: $purple;
-  border-top-color: $purple;
+  border-right-color: var(--purple);
+  border-top-color: var(--purple);
   height: 96px;
   width: 96px;
   position: relative;
 
-  &:before {
+  &::before {
     content: '';
     animation: spin 2s infinite linear;
     border: solid 12px transparent;
     border-radius: 50%;
-    border-right-color: color.adjust($purple, $lightness: 10%);
-    border-top-color: color.adjust($purple, $lightness: 10%);
+    border-right-color: color-mix(in srgb, var(--purple), white 20%);
+    border-top-color: color-mix(in srgb, var(--purple), white 20%);
     height: 72px;
     width: 72px;
     position: absolute;
@@ -31,13 +28,13 @@
     left: 0;
   }
 
-  &:after {
+  &::after {
     content: '';
     animation: spin 3s infinite linear;
     border: solid 12px transparent;
     border-radius: 50%;
-    border-right-color: color.adjust($purple, $lightness: 20%);
-    border-top-color: color.adjust($purple, $lightness: 20%);
+    border-right-color: color-mix(in srgb, var(--purple), white 40%);
+    border-top-color: color-mix(in srgb, var(--purple), white 40%);
     height: 48px;
     width: 48px;
     position: absolute;
