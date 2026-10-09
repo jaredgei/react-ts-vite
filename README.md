@@ -90,8 +90,6 @@ npm run test:watch  # watch mode
 audit (production deps) → lint → format:check → test → build (includes typecheck)
 ```
 
-Dependabot (`.github/dependabot.yml`) opens weekly update PRs for npm packages and GitHub Actions.
-
 ## Security
 
 The frontend is one layer; these must also hold where the app is deployed:
