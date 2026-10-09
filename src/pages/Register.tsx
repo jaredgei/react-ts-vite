@@ -1,7 +1,6 @@
-import styles from '@/styles/Register.module.css';
+import styles from '@/styles/Auth.module.css';
 
 import { useActionState } from 'react';
-import { useNavigate } from 'react-router';
 
 import { useAuth } from '@/context/Auth';
 import { useError } from '@/context/Error';
@@ -12,36 +11,42 @@ import { field } from '@/utilities/form';
 
 const Register = () => {
   const { register } = useAuth();
-  const { showError } = useError();
-  const navigate = useNavigate();
+  const { showError, clearError } = useError();
 
-  const [, submit, pending] = useActionState(async (_: null, form: FormData) => {
-    try {
-      await register(field(form, 'name'), field(form, 'email'), field(form, 'password'));
-      await navigate('/', { replace: true });
-    } catch (error) {
-      showError(error);
-    }
-    return null;
-  }, null);
+  const [values, submit, pending] = useActionState(
+    async (_: { name: string; email: string }, form: FormData) => {
+      const name = field(form, 'name');
+      const email = field(form, 'email');
+      clearError();
+      try {
+        await register(name, email, field(form, 'password'));
+      } catch (error) {
+        showError(error);
+      }
+      return { name, email };
+    },
+    { name: '', email: '' },
+  );
 
   return (
-    <div className={styles.register}>
+    <div className={styles.auth}>
       <h1>Register</h1>
       <form className={styles.form} action={submit}>
         <label>
           Name
-          <input type='text' name='name' required />
+          <input type='text' name='name' autoComplete='name' defaultValue={values.name} maxLength={255} required />
         </label>
         <label>
           Email
-          <input type='email' name='email' required />
+          <input type='email' name='email' autoComplete='email' defaultValue={values.email} maxLength={255} required />
         </label>
         <label>
           Password
-          <input type='password' name='password' required />
+          <input type='password' name='password' autoComplete='new-password' minLength={8} maxLength={256} required />
         </label>
-        <Button text='Register' type='submit' disabled={pending} />
+        <Button type='submit' disabled={pending}>
+          Register
+        </Button>
       </form>
     </div>
   );

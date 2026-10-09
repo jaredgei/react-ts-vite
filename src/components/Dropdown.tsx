@@ -4,6 +4,7 @@ import { type ReactNode, useId, useRef, useState } from 'react';
 
 import Suggestions, { type Option } from '@/components/Suggestions';
 
+import { cx } from '@/utilities/classes';
 import { caret } from '@/utilities/icons';
 
 type Props = {
@@ -22,14 +23,14 @@ const Dropdown = ({ title, value, content, options, isActive, hasError, classNam
   const menuId = useId();
 
   return (
-    <div className={`${styles.dropdown} ${className ?? ''}`.trim()}>
+    <div className={cx(styles.dropdown, className)}>
       <button
         ref={trigger}
         type='button'
         aria-haspopup='menu'
         aria-expanded={isExpanded}
         aria-controls={menuId}
-        className={`${styles.trigger} ${isActive ? styles.active : ''} ${hasError ? styles.error : ''}`.trim()}
+        className={cx(styles.trigger, isActive && styles.active, hasError && styles.error)}
         onClick={() => setIsExpanded((prev) => !prev)}>
         <span className={styles.title}>{value || title}</span>
         {caret}

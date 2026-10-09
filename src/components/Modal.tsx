@@ -1,25 +1,37 @@
 import styles from '@/styles/Modal.module.css';
 
-import { type MouseEvent, type ReactNode, useEffect, useRef } from 'react';
+import { type ReactNode, useEffect, useRef } from 'react';
 
 type Props = {
   onClose: () => void;
   children: ReactNode;
+  label?: string;
 };
 
-const Modal = ({ onClose, children }: Props) => {
+const Modal = ({ onClose, children, label }: Props) => {
   const dialog = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    dialog.current?.showModal();
+    const element = dialog.current;
+    if (!element) return;
+    element.showModal();
+    let pressedBackdrop = false;
+    const onPointerDown = (event: PointerEvent) => {
+      pressedBackdrop = event.target === element;
+    };
+    const onClick = (event: MouseEvent) => {
+      if (pressedBackdrop && event.target === element) element.close();
+    };
+    element.addEventListener('pointerdown', onPointerDown);
+    element.addEventListener('click', onClick);
+    return () => {
+      element.removeEventListener('pointerdown', onPointerDown);
+      element.removeEventListener('click', onClick);
+    };
   }, []);
 
-  const handleClick = (event: MouseEvent<HTMLDialogElement>) => {
-    if (event.target === dialog.current) dialog.current?.close();
-  };
-
   return (
-    <dialog ref={dialog} className={styles.modal} onClose={onClose} onClick={handleClick}>
+    <dialog ref={dialog} aria-label={label} className={styles.modal} onClose={onClose}>
       <div className={styles.content}>{children}</div>
     </dialog>
   );

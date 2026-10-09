@@ -1,44 +1,31 @@
 import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { get, post, setUnauthorizedHandler } from '@/utilities/api';
-import { createSafeContext } from '@/utilities/context';
+import { AuthContext, type User } from '@/context/Auth';
+import { useError } from '@/context/Error';
 
-export type User = {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type AuthContextType = {
-  user: User | null;
-  loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-};
-
-const [AuthContext, useAuth] = createSafeContext<AuthContextType>('Auth');
+import { ApiError, get, post, setUnauthorizedHandler } from '@/utilities/api';
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const { showError } = useError();
 
   useEffect(() => {
     setUnauthorizedHandler(() => setUser(null));
+    const controller = new AbortController();
     const bootstrap = async () => {
       try {
-        const { user } = await get<{ user: User }>('/api/users/me');
+        const { user } = await get<{ user: User }>('/api/users/me', { signal: controller.signal });
         setUser(user);
-      } catch {
-        setUser(null);
-      } finally {
-        setLoading(false);
+      } catch (error) {
+        if (controller.signal.aborted) return;
+        if (!(error instanceof ApiError && error.status === 401)) showError(error);
       }
+      setLoading(false);
     };
     void bootstrap();
-  }, []);
+    return () => controller.abort();
+  }, [showError]);
 
   const login = useCallback(async (email: string, password: string) => {
     const { user } = await post<{ user: User }>('/api/users/login', { email, password });
@@ -60,4 +47,4 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   return <AuthContext value={value}>{children}</AuthContext>;
 };
 
-export { AuthProvider, useAuth };
+export default AuthProvider;

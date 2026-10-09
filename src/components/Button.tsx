@@ -1,43 +1,46 @@
 import styles from '@/styles/Button.module.css';
 
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { Link } from 'react-router';
 
-type ButtonProps = Omit<ButtonHTMLAttributes<HTMLElement>, 'type'> & {
-  text: string;
+import { cx } from '@/utilities/classes';
+
+type BaseProps = {
+  children: ReactNode;
   icon?: ReactNode;
-  url?: string;
   size?: 'small' | 'large';
   variant?: 'primary' | 'secondary';
-  type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
+  className?: string;
 };
 
-const Button = ({ text, icon, url, size = 'small', variant = 'primary', type = 'button', disabled = false, className, ...rest }: ButtonProps) => {
-  const classes = [styles.button, size === 'small' && styles.small, styles[variant], disabled && styles.disabled, className]
-    .filter(Boolean)
-    .join(' ');
+type ButtonProps = BaseProps & Omit<ComponentProps<'button'>, keyof BaseProps>;
+type LinkProps = BaseProps & Omit<ComponentProps<typeof Link>, keyof BaseProps>;
+
+const Button = ({ children, icon, size = 'small', variant = 'primary', disabled = false, className, ...rest }: ButtonProps | LinkProps) => {
+  const classes = cx(styles.button, styles[size], styles[variant], disabled && styles.disabled, className);
   const content = (
     <>
       {icon}
-      <span className={styles.buttonText}>{text}</span>
+      <span className={styles.text}>{children}</span>
     </>
   );
 
-  if (url !== undefined) {
+  if ('to' in rest) {
+    const { to, ...linkRest } = rest;
     return disabled ? (
-      <span role='link' aria-disabled='true' className={classes} {...rest}>
+      <span role='link' aria-disabled='true' className={classes}>
         {content}
       </span>
     ) : (
-      <Link to={url} className={classes} {...rest}>
+      <Link to={to} className={classes} {...linkRest}>
         {content}
       </Link>
     );
   }
 
   return (
-    <button type={type} disabled={disabled} className={classes} {...rest}>
+    <button type='button' disabled={disabled} className={classes} {...rest}>
       {content}
     </button>
   );

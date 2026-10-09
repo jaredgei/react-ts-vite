@@ -25,12 +25,20 @@ describe('RouteError', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllEnvs();
   });
 
   it('shows a thrown Error message', async () => {
     renderAtErroringRoute(new Error('loader failed'));
     expect(await screen.findByText('loader failed')).toBeInTheDocument();
     expect(screen.getByText('Something went wrong')).toBeInTheDocument();
+  });
+
+  it('hides a thrown Error message in production', async () => {
+    vi.stubEnv('DEV', false);
+    renderAtErroringRoute(new Error('loader failed'));
+    expect(await screen.findByText('An unexpected error occurred. Please try again.')).toBeInTheDocument();
+    expect(screen.queryByText('loader failed')).not.toBeInTheDocument();
   });
 
   it('shows status and text for a route error response', async () => {

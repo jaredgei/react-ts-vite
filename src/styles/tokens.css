@@ -9,10 +9,10 @@
   --green: #2d9c62;
   --pink: #ffdeff;
   --blue: #5b96ff;
-  --purple: #806fd7;
-  --purple-hover: color-mix(in srgb, var(--purple), white 24%);
+  --purple: #6a56cc;
+  --purple-hover: color-mix(in srgb, var(--purple), black 20%);
   --yellow: #ffd22e;
-  --red: #ff4d58;
+  --red: #d6303d;
 
   --tiny-spacing: 4px;
   --small-spacing: 8px;

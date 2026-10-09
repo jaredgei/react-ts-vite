@@ -1,29 +1,50 @@
 import type { ReactNode } from 'react';
 import { act, render, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { ErrorProvider, useError } from '@/context/Error';
+import { useError } from '@/context/Error';
+import ErrorProvider from '@/context/ErrorProvider';
+
+import { ApiError } from '@/utilities/api';
 
 const wrapper = ({ children }: { children: ReactNode }) => <ErrorProvider>{children}</ErrorProvider>;
 
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
+
 describe('Error context', () => {
+  it('always shows API error messages', () => {
+    vi.stubEnv('DEV', false);
+    const { result } = renderHook(() => useError(), { wrapper });
+    act(() => result.current.showError(new ApiError(409, 'Resource already exists')));
+    expect(result.current.message).toBe('Resource already exists');
+  });
+
+  it('hides unexpected error details in production', () => {
+    vi.stubEnv('DEV', false);
+    const { result } = renderHook(() => useError(), { wrapper });
+    act(() => result.current.showError(new TypeError("Cannot read properties of undefined (reading 'id')")));
+    expect(result.current.message).toBe('An unexpected error occurred. Please try again.');
+  });
+
   it('starts with no error', () => {
     const { result } = renderHook(() => useError(), { wrapper });
-    expect(result.current.error).toBeNull();
+    expect(result.current.message).toBeNull();
   });
 
   it('normalizes any thrown value through showError', () => {
     const { result } = renderHook(() => useError(), { wrapper });
     act(() => result.current.showError('boom'));
-    expect(result.current.error?.message).toBe('boom');
+    expect(result.current.message).toBe('boom');
   });
 
   it('clears the error', () => {
     const { result } = renderHook(() => useError(), { wrapper });
     act(() => result.current.showError(new Error('boom')));
     act(() => result.current.clearError());
-    expect(result.current.error).toBeNull();
+    expect(result.current.message).toBeNull();
   });
 
   it('shares state across consumers under the same provider', async () => {
@@ -32,8 +53,8 @@ describe('Error context', () => {
       return <button onClick={() => showError(new Error('shared'))}>set</button>;
     };
     const Reader = () => {
-      const { error } = useError();
-      return <div>{error?.message ?? 'none'}</div>;
+      const { message } = useError();
+      return <div>{message ?? 'none'}</div>;
     };
     render(
       <ErrorProvider>

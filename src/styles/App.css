@@ -48,13 +48,11 @@ button {
   text-align: inherit;
 }
 
-a,
-.link {
+a {
   color: var(--purple);
   font-weight: bold;
   text-decoration: none;
   transition: color var(--animation-duration);
-  cursor: pointer;
 
   &:hover {
     color: var(--purple-hover);
@@ -82,7 +80,7 @@ textarea {
   padding: var(--small-spacing);
   margin: 0;
   border-radius: var(--standard-border-radius);
-  border: 1px solid var(--light-gray);
+  border: 1px solid var(--gray);
   transition: border-color var(--animation-duration);
 
   &:focus-visible {
@@ -110,7 +108,7 @@ select {
   margin: 0;
   border-radius: var(--standard-border-radius);
   font-weight: bold;
-  border: 1px solid var(--light-gray);
+  border: 1px solid var(--gray);
   background: var(--field) url('../assets/caret.svg') right var(--small-spacing) center / 14px 14px no-repeat;
   color: var(--dark-gray);
   max-width: 100%;
@@ -121,19 +119,31 @@ select {
   }
 }
 
-.app {
+#root,
+.app,
+.page {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
 }
 
+.app,
 .page {
   flex: 1;
 }
 
-.loadingContainer {
-  flex: 1;
+.center {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -5,3 +5,13 @@
   justify-content: space-between;
   padding: var(--medium-spacing);
 }
+
+.link {
+  color: var(--purple);
+  font-weight: bold;
+  transition: color var(--animation-duration);
+
+  &:hover {
+    color: var(--purple-hover);
+  }
+}

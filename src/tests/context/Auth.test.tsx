@@ -2,22 +2,32 @@ import type { ReactNode } from 'react';
 import { act, render, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { AuthProvider, useAuth } from '@/context/Auth';
+import { useAuth } from '@/context/Auth';
+import AuthProvider from '@/context/AuthProvider';
+import { useError } from '@/context/Error';
+import ErrorProvider from '@/context/ErrorProvider';
 
-import { get, post } from '@/utilities/api';
+import { ApiError, get, post } from '@/utilities/api';
 
-vi.mock('@/utilities/api', () => ({
+vi.mock('@/utilities/api', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/utilities/api')>()),
   get: vi.fn(),
   post: vi.fn(),
-  setUnauthorizedHandler: vi.fn(),
 }));
 
 const mockGet = vi.mocked(get);
 const mockPost = vi.mocked(post);
 
 const user = { id: '1', name: 'Ada', email: 'ada@example.com', createdAt: '', updatedAt: '' };
+const unauthorized = new ApiError(401, 'Unauthorized');
 
-const wrapper = ({ children }: { children: ReactNode }) => <AuthProvider>{children}</AuthProvider>;
+const wrapper = ({ children }: { children: ReactNode }) => (
+  <ErrorProvider>
+    <AuthProvider>{children}</AuthProvider>
+  </ErrorProvider>
+);
+
+const useAuthAndError = () => ({ ...useAuth(), ...useError() });
 
 afterEach(() => {
   vi.clearAllMocks();
@@ -31,19 +41,30 @@ describe('Auth context', () => {
     expect(result.current.loading).toBe(true);
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.user).toEqual(user);
-    expect(mockGet).toHaveBeenCalledWith('/api/users/me');
+    expect(mockGet.mock.calls[0]?.[0]).toBe('/api/users/me');
+    expect(mockGet.mock.calls[0]?.[1]?.signal).toBeInstanceOf(AbortSignal);
   });
 
-  it('stays logged out when /me fails', async () => {
-    mockGet.mockRejectedValue(new Error('Unauthorized'));
-    const { result } = renderHook(() => useAuth(), { wrapper });
+  it('stays logged out silently when /me is unauthorized', async () => {
+    mockGet.mockRejectedValue(unauthorized);
+    const { result } = renderHook(useAuthAndError, { wrapper });
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.user).toBeNull();
+    expect(result.current.message).toBeNull();
+  });
+
+  it('surfaces non-auth bootstrap failures', async () => {
+    mockGet.mockRejectedValue(new ApiError(500, 'Server down'));
+    const { result } = renderHook(useAuthAndError, { wrapper });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.user).toBeNull();
+    expect(result.current.message).toBe('Server down');
   });
 
   it('sets the user on login', async () => {
-    mockGet.mockRejectedValue(new Error('Unauthorized'));
+    mockGet.mockRejectedValue(unauthorized);
     mockPost.mockResolvedValue({ user });
     const { result } = renderHook(() => useAuth(), { wrapper });
     await waitFor(() => expect(result.current.loading).toBe(false));
@@ -54,7 +75,7 @@ describe('Auth context', () => {
   });
 
   it('sets the user on register', async () => {
-    mockGet.mockRejectedValue(new Error('Unauthorized'));
+    mockGet.mockRejectedValue(unauthorized);
     mockPost.mockResolvedValue({ user });
     const { result } = renderHook(() => useAuth(), { wrapper });
     await waitFor(() => expect(result.current.loading).toBe(false));

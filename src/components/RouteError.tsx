@@ -1,25 +1,23 @@
-import styles from '@/styles/ErrorBoundary.module.css';
+import styles from '@/styles/StatusPage.module.css';
 
 import { isRouteErrorResponse, useRouteError } from 'react-router';
 
 import Button from '@/components/Button';
 
+import { toDisplayMessage } from '@/utilities/errors';
 import { home } from '@/utilities/icons';
 
 const RouteError = () => {
   const error = useRouteError();
-  const message = isRouteErrorResponse(error)
-    ? `${error.status} ${error.statusText}`
-    : error instanceof Error
-      ? error.message
-      : 'An unexpected error occurred.';
 
   return (
-    <div className={styles.errorBoundary}>
-      <div className={styles.title}>Something went wrong</div>
-      <div className={styles.message}>{message}</div>
-      <Button icon={home} text='Go Home' url='/' className={styles.action} />
-    </div>
+    <main className={styles.statusPage}>
+      <h1 className={styles.title}>Something went wrong</h1>
+      <p className={styles.message}>{isRouteErrorResponse(error) ? `${error.status} ${error.statusText}` : toDisplayMessage(error)}</p>
+      <Button icon={home} to='/' className={styles.action}>
+        Go Home
+      </Button>
+    </main>
   );
 };
 

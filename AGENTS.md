@@ -22,6 +22,7 @@ npm run typecheck
 npm run lint
 npm run format:check
 npm run test
+npm run build
 ```
 
 Use `npm run format` to auto-fix formatting, then re-run the checks.
@@ -45,6 +46,7 @@ import { useActionState } from 'react';
 import { useNavigate } from 'react-router';
 
 import { useError } from '@/context/Error';
+import ErrorProvider from '@/context/ErrorProvider';
 
 import { useViewportTracker } from '@/hooks/useViewportTracker';
 
@@ -52,14 +54,19 @@ import Home from '@/pages/Home';
 
 import Button from '@/components/Button';
 
-import { isValidEmail } from '@/utilities/validation';
+import { cx } from '@/utilities/classes';
 ```
+
+## Context
+
+A context lives in two files so Fast Refresh keeps working: `@/context/Foo.ts` creates it with `createSafeContext` and exports the context, `useFoo` hook, and types; `@/context/FooProvider.tsx` default-exports only the provider component. Component files export only components (types are fine).
 
 ## Styles
 
 - New styles are CSS modules: `Foo.module.css`, imported as `import styles from '@/styles/Foo.module.css'`, referenced via `styles.className`. Global element resets live in `@/styles/App.css` only.
 - Rules are top-level. Nest only for a genuine descendant, `&:` state, or `&.` modifier (native CSS nesting).
 - Use the custom properties from `@/styles/tokens.css` (`var(--purple)`, `var(--medium-spacing)`, etc.). Do not hard-code a value that has a token: colors, spacing, radii, z-indexes, durations. Derive color variants with `color-mix`. Media-query breakpoints use literal lengths (custom properties can't be read inside a media condition).
+- Combine class names with `cx(...)` from `@/utilities/classes`, never string templates.
 - Lightning CSS handles vendor prefixing and syntax lowering; write modern CSS (nesting, `color-mix`, `@starting-style`, `:focus-visible`).
 
 ## Platform first
@@ -70,6 +77,7 @@ Prefer native platform features over hand-rolled logic: `<dialog>` with `showMod
 
 - Write the smallest clear implementation. Prefer concise over verbose or cleverly dense.
 - **No comments.** Convey intent through naming, not prose. Do not add comments to explain what code does, restate logic, or narrate changes. This is a hard rule, not a preference.
+- Components take content as `children`, not text props. Forward native attributes (e.g. `aria-label`) by spreading the element's `ComponentProps`.
 - Use TypeScript's `type` keyword, not `interface`.
 - `verbatimModuleSyntax` is on: import types with `import type` / inline `type`.
 - Never use `any`. Use a precise type, a generic, or `unknown` with narrowing.

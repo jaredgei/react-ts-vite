@@ -21,7 +21,7 @@ const Header = () => {
     <header className={styles.header}>
       <Link to='/'>Logo</Link>
       {user && (
-        <button type='button' className='link' onClick={() => void handleLogout()}>
+        <button type='button' className={styles.link} onClick={() => void handleLogout()}>
           Logout
         </button>
       )}

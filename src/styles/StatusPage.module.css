@@ -1,30 +1,31 @@
-.notFound {
+.statusPage {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: var(--large-spacing);
+  text-align: center;
+}
 
-  h1 {
-    font-size: 12rem;
-    line-height: 1em;
-    font-weight: bold;
-    margin: 0;
-  }
+.code {
+  font-size: 12rem;
+  line-height: 1em;
+  font-weight: bold;
+  margin: 0;
 }
 
 .title {
   font-weight: bold;
   font-size: var(--large-font);
   text-transform: uppercase;
-  margin-top: var(--small-spacing);
+  margin: var(--small-spacing) 0 0;
 }
 
-.description {
+.message {
   max-width: 400px;
-  opacity: 0.6;
-  text-align: center;
-  margin-top: var(--small-spacing);
+  color: var(--gray);
+  margin: var(--small-spacing) 0 0;
 }
 
 .action {

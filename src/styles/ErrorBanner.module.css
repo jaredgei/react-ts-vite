@@ -1,0 +1,46 @@
+.banner {
+  display: grid;
+  grid-template-rows: 0fr;
+  background: var(--red);
+  color: var(--white);
+  font-weight: bold;
+  transition: grid-template-rows var(--animation-duration);
+}
+
+.visible {
+  grid-template-rows: 1fr;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: var(--medium-spacing);
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 var(--large-spacing);
+}
+
+.message {
+  flex: 1;
+  padding: var(--small-spacing) 0;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--input-height);
+  height: var(--input-height);
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:focus-visible {
+    outline-color: var(--white);
+    outline-offset: -4px;
+  }
+}

@@ -1,6 +1,6 @@
 .home {
+  flex: 1;
   background-color: var(--silver);
-  height: 100%;
   padding: var(--medium-spacing);
 
   h1 {

@@ -11,7 +11,6 @@
 .suggestions {
   width: 180px;
   max-width: calc(100vw - var(--medium-spacing));
-  max-height: 280px;
   overflow-y: auto;
   background: rgb(255 255 255 / 0.75);
   backdrop-filter: var(--blur);
@@ -73,6 +72,15 @@
   svg {
     width: 14px;
     height: 14px;
+  }
+}
+
+.back {
+  justify-content: flex-start;
+
+  .suggestionIcon {
+    margin: 0 var(--small-spacing) 0 0;
+    transform: scaleX(-1);
   }
 }
 

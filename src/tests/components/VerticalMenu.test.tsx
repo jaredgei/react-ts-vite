@@ -18,6 +18,17 @@ describe('VerticalMenu', () => {
     expect(button).toHaveAttribute('aria-expanded', 'true');
   });
 
+  it('focuses the first item when opened', async () => {
+    render(<VerticalMenu options={[{ name: 'Edit' }, { name: 'Delete' }]} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Options' }));
+    expect(screen.getByRole('menuitem', { name: 'Edit' })).toHaveFocus();
+  });
+
+  it('accepts a custom label', () => {
+    render(<VerticalMenu label='Row actions' options={[{ name: 'Edit' }]} />);
+    expect(screen.getByRole('button', { name: 'Row actions' })).toBeInTheDocument();
+  });
+
   it('calls an option onSelect when chosen', async () => {
     const onSelect = vi.fn();
     render(<VerticalMenu options={[{ name: 'Delete', onSelect }]} />);

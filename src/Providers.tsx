@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
-import { AuthProvider } from '@/context/Auth';
-import { ErrorProvider } from '@/context/Error';
+import AuthProvider from '@/context/AuthProvider';
+import ErrorProvider from '@/context/ErrorProvider';
 
 import ErrorBoundary from '@/components/ErrorBoundary';
 

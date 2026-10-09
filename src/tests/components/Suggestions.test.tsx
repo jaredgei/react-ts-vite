@@ -30,6 +30,31 @@ describe('Suggestions', () => {
     expect(screen.getByText('header')).toBeInTheDocument();
   });
 
+  it('moves focus between items with the arrow keys', async () => {
+    render(<Suggestions options={[{ name: 'One' }, {}, { name: 'Two' }, { name: 'Three', disabled: true }]} />);
+    screen.getByRole('menuitem', { name: 'One' }).focus();
+    await userEvent.keyboard('{ArrowDown}');
+    expect(screen.getByRole('menuitem', { name: 'Two' })).toHaveFocus();
+    await userEvent.keyboard('{ArrowDown}');
+    expect(screen.getByRole('menuitem', { name: 'One' })).toHaveFocus();
+    await userEvent.keyboard('{ArrowUp}');
+    expect(screen.getByRole('menuitem', { name: 'Two' })).toHaveFocus();
+    await userEvent.keyboard('{Home}');
+    expect(screen.getByRole('menuitem', { name: 'One' })).toHaveFocus();
+    await userEvent.keyboard('{End}');
+    expect(screen.getByRole('menuitem', { name: 'Two' })).toHaveFocus();
+  });
+
+  it('drills into child options and back out again', async () => {
+    render(<Suggestions options={[{ name: 'More', children: [{ name: 'Child' }] }]} />);
+    await userEvent.click(screen.getByRole('menuitem', { name: 'More' }));
+    expect(screen.getByRole('menuitem', { name: 'Child' })).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: 'Back' })).toHaveFocus();
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Back' }));
+    expect(screen.getByRole('menuitem', { name: 'More' })).toBeInTheDocument();
+    expect(screen.queryByRole('menuitem', { name: 'Child' })).not.toBeInTheDocument();
+  });
+
   it('renders anchored suggestions that can be interacted with', async () => {
     const onSelect = vi.fn();
     const Harness = () => {

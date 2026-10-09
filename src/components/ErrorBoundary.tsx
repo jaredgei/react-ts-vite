@@ -1,37 +1,42 @@
-import styles from '@/styles/ErrorBoundary.module.css';
+import styles from '@/styles/StatusPage.module.css';
 
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 import Button from '@/components/Button';
+
+import { toDisplayMessage } from '@/utilities/errors';
 
 type Props = {
   children: ReactNode;
 };
 
 type State = {
-  error: Error | null;
+  error: unknown;
+  hasError: boolean;
 };
 
 class ErrorBoundary extends Component<Props, State> {
-  state: State = { error: null };
+  state: State = { error: null, hasError: false };
 
-  static getDerivedStateFromError(error: Error): State {
-    return { error };
+  static getDerivedStateFromError(error: unknown): State {
+    return { error, hasError: true };
   }
 
-  componentDidCatch(error: Error, info: ErrorInfo) {
+  componentDidCatch(error: unknown, info: ErrorInfo) {
     console.error(error, info.componentStack);
   }
 
   render() {
-    if (!this.state.error) return this.props.children;
+    if (!this.state.hasError) return this.props.children;
 
     return (
-      <div className={styles.errorBoundary}>
-        <div className={styles.title}>Something went wrong</div>
-        <div className={styles.message}>{this.state.error.message}</div>
-        <Button text='Reload' onClick={() => window.location.reload()} className={styles.action} />
-      </div>
+      <main className={styles.statusPage}>
+        <h1 className={styles.title}>Something went wrong</h1>
+        <p className={styles.message}>{toDisplayMessage(this.state.error)}</p>
+        <Button onClick={() => window.location.reload()} className={styles.action}>
+          Reload
+        </Button>
+      </main>
     );
   }
 }

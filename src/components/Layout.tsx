@@ -1,27 +1,33 @@
-import { Outlet } from 'react-router';
+import { useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router';
 
 import { useAuth } from '@/context/Auth';
+import { useError } from '@/context/Error';
 
-import Error from '@/components/Error';
+import ErrorBanner from '@/components/ErrorBanner';
 import Header from '@/components/Header';
 import Spinner from '@/components/Spinner';
 
 const Layout = () => {
   const { loading } = useAuth();
+  const { clearError } = useError();
+  const { pathname } = useLocation();
+
+  useEffect(() => clearError, [pathname, clearError]);
 
   return (
     <div className='app'>
       <Header />
-      <Error />
-      <div className='page'>
+      <ErrorBanner />
+      <main className='page'>
         {loading ? (
-          <div className='loadingContainer'>
+          <div className='center'>
             <Spinner />
           </div>
         ) : (
           <Outlet />
         )}
-      </div>
+      </main>
     </div>
   );
 };
