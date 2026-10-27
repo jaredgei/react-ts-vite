@@ -1,28 +1,31 @@
-@keyframes spin {
-  100% {
-    transform: rotate(360deg);
-  }
+.center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .spinner {
+  --size: 96px;
+  --ring: calc(var(--size) / 8);
   animation: spin 1s infinite linear;
-  border: solid 12px transparent;
-  border-radius: 50%;
-  border-right-color: var(--purple);
-  border-top-color: var(--purple);
-  height: 96px;
-  width: 96px;
+  border: solid var(--ring) transparent;
+  border-radius: var(--radius-full);
+  border-right-color: var(--color-primary);
+  border-top-color: var(--color-primary);
+  height: var(--size);
+  width: var(--size);
   position: relative;
 
   &::before {
     content: '';
     animation: spin 2s infinite linear;
-    border: solid 12px transparent;
-    border-radius: 50%;
-    border-right-color: color-mix(in srgb, var(--purple), white 20%);
-    border-top-color: color-mix(in srgb, var(--purple), white 20%);
-    height: 72px;
-    width: 72px;
+    border: solid var(--ring) transparent;
+    border-radius: var(--radius-full);
+    border-right-color: color-mix(in srgb, var(--color-primary), white 20%);
+    border-top-color: color-mix(in srgb, var(--color-primary), white 20%);
+    height: calc(var(--size) - 2 * var(--ring));
+    width: calc(var(--size) - 2 * var(--ring));
     position: absolute;
     top: 0;
     left: 0;
@@ -31,14 +34,14 @@
   &::after {
     content: '';
     animation: spin 3s infinite linear;
-    border: solid 12px transparent;
-    border-radius: 50%;
-    border-right-color: color-mix(in srgb, var(--purple), white 40%);
-    border-top-color: color-mix(in srgb, var(--purple), white 40%);
-    height: 48px;
-    width: 48px;
+    border: solid var(--ring) transparent;
+    border-radius: var(--radius-full);
+    border-right-color: color-mix(in srgb, var(--color-primary), white 40%);
+    border-top-color: color-mix(in srgb, var(--color-primary), white 40%);
+    height: calc(var(--size) - 4 * var(--ring));
+    width: calc(var(--size) - 4 * var(--ring));
     position: absolute;
-    top: 12px;
-    left: 12px;
+    top: var(--ring);
+    left: var(--ring);
   }
 }

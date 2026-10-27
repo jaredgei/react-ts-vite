@@ -1,0 +1,53 @@
+.toast {
+  inset: var(--space-md) 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: min(480px, 100% - 2 * var(--space-md));
+  margin: 0 auto;
+  padding: var(--space-sm) var(--space-sm) var(--space-sm) var(--space-md);
+  color: var(--color-text-inverse);
+  background: var(--color-danger);
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  font-weight: bold;
+  opacity: 0;
+  transform: translateY(calc(-1 * var(--space-md)));
+  transition:
+    opacity var(--duration) var(--ease-out),
+    transform var(--duration) var(--ease-out),
+    overlay var(--duration) allow-discrete,
+    display var(--duration) allow-discrete;
+
+  > svg {
+    flex: none;
+    width: var(--icon-md);
+    height: var(--icon-md);
+    fill: currentColor;
+  }
+
+  &:popover-open {
+    opacity: 1;
+    transform: none;
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(calc(-1 * var(--space-md)));
+    }
+  }
+}
+
+.message {
+  flex: 1;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.dismiss {
+  color: inherit;
+
+  &:focus-visible {
+    outline-color: currentColor;
+  }
+}

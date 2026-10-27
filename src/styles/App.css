@@ -22,6 +22,12 @@
   box-sizing: border-box;
 }
 
+@keyframes spin {
+  to {
+    rotate: 1turn;
+  }
+}
+
 html,
 body,
 #root {
@@ -32,9 +38,9 @@ body,
 
 body {
   font-family: 'Open Sans', sans-serif;
-  font-size: 1rem;
-  background: var(--white);
-  color: var(--dark-gray);
+  font-size: var(--font-size-md);
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 button {
@@ -48,19 +54,37 @@ button {
   text-align: inherit;
 }
 
-a {
-  color: var(--purple);
-  font-weight: bold;
-  text-decoration: none;
-  transition: color var(--animation-duration);
+h1,
+h2,
+h3,
+p,
+blockquote,
+figure,
+ul,
+ol {
+  margin: 0;
+}
 
-  &:hover {
-    color: var(--purple-hover);
+:where(a) {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Only a bare link in text looks like a link; a link with a class is a component that styles itself. */
+:where(a:not([class])) {
+  color: var(--color-primary);
+  font-weight: bold;
+  transition: color var(--duration);
+}
+
+@media (hover: hover) {
+  :where(a:not([class]):hover) {
+    color: var(--color-primary-hover);
   }
 }
 
 :focus-visible {
-  outline: 2px solid var(--purple);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
@@ -73,49 +97,60 @@ input[type='text'],
 input[type='number'],
 input[type='email'],
 input[type='password'],
+input[type='search'],
 textarea {
-  background: var(--field);
-  font-family: inherit;
-  color: var(--black);
-  padding: var(--small-spacing);
+  background: var(--color-field);
+  font: inherit;
+  color: var(--color-field-text);
+  padding: var(--space-sm);
   margin: 0;
-  border-radius: var(--standard-border-radius);
-  border: 1px solid var(--gray);
-  transition: border-color var(--animation-duration);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-strong);
+  transition: border-color var(--duration);
 
   &:focus-visible {
     outline: none;
-    border-color: var(--purple);
+    border-color: var(--color-primary);
   }
 
   &[aria-invalid='true'] {
-    border-color: var(--red);
+    border-color: var(--color-danger);
+  }
+
+  &:read-only {
+    color: var(--color-text-muted);
   }
 }
 
 input[type='text'],
 input[type='number'],
 input[type='email'],
-input[type='password'] {
+input[type='password'],
+input[type='search'] {
   height: var(--input-height);
 }
 
+/* Safari otherwise draws search fields with its own bezel, ignoring the styles above. */
+input[type='search'] {
+  appearance: none;
+}
+
 select {
-  font-family: inherit;
+  font: inherit;
   appearance: none;
   height: var(--input-height);
-  padding: 0 calc(var(--medium-spacing) + 14px) 0 var(--small-spacing);
+  padding: 0 calc(var(--space-md) + var(--icon-sm)) 0 var(--space-sm);
   margin: 0;
-  border-radius: var(--standard-border-radius);
+  border-radius: var(--radius-md);
   font-weight: bold;
-  border: 1px solid var(--gray);
-  background: var(--field) url('../assets/caret.svg') right var(--small-spacing) center / 14px 14px no-repeat;
-  color: var(--dark-gray);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-field) url('../assets/caret.svg') right var(--space-sm) center / var(--icon-sm) var(--icon-sm) no-repeat;
+  color: var(--color-text);
   max-width: 100%;
 
   &:focus-visible {
     outline: none;
-    border-color: var(--purple);
+    border-color: var(--color-primary);
   }
 }
 
@@ -129,12 +164,6 @@ select {
 .app,
 .page {
   flex: 1;
-}
-
-.center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 @media (prefers-reduced-motion: reduce) {

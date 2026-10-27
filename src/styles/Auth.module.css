@@ -1,21 +1,42 @@
 .auth {
-  padding: var(--medium-spacing);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  max-width: 352px;
+  padding: var(--space-md);
+}
 
-  h1 {
-    margin: 0;
-  }
+.subtitle,
+.divider,
+.footer {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: var(--medium-spacing);
-  max-width: 320px;
-  margin-top: var(--medium-spacing);
+  gap: var(--space-md);
 
   label {
     display: flex;
     flex-direction: column;
-    gap: var(--small-spacing);
+    gap: var(--space-sm);
+  }
+}
+
+.hint {
+  align-self: flex-end;
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: bold;
+}
+
+.providers {
+  display: flex;
+  gap: var(--space-sm);
+
+  > * {
+    flex: 1;
   }
 }

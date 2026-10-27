@@ -1,13 +1,17 @@
 import styles from '@/styles/Header.module.css';
 
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 
 import { useAuth } from '@/context/Auth';
 import { useError } from '@/context/Error';
 
+import Button from '@/components/Button';
+import MenuButton from '@/components/MenuButton';
+
 const Header = () => {
-  const { user, logout } = useAuth();
+  const { user, loading, logout } = useAuth();
   const { showError } = useError();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
@@ -20,10 +24,27 @@ const Header = () => {
   return (
     <header className={styles.header}>
       <Link to='/'>Logo</Link>
-      {user && (
-        <button type='button' className={styles.link} onClick={() => void handleLogout()}>
-          Logout
-        </button>
+      {!loading && (
+        <nav className={styles.actions}>
+          {user ? (
+            <MenuButton
+              label='Account'
+              variant='secondary'
+              options={[
+                { name: 'Settings', onSelect: () => void navigate('/settings') },
+                ...(user.role === 'admin' ? [{ name: 'Admin', onSelect: () => void navigate('/admin') }] : []),
+                {},
+                { name: 'Log out', onSelect: () => void handleLogout() },
+              ]}>
+              {user.name}
+            </MenuButton>
+          ) : (
+            <>
+              <Link to='/login'>Log in</Link>
+              <Button to='/register'>Sign up</Button>
+            </>
+          )}
+        </nav>
       )}
     </header>
   );

@@ -2,25 +2,34 @@
 import { cleanup } from '@testing-library/react';
 import { afterEach } from 'vitest';
 
+import { FakeResizeObserver } from '@/tests/resizeObserver';
+
 import '@testing-library/jest-dom/vitest';
 
 afterEach(() => {
   cleanup();
+  localStorage.clear();
 });
 
-class ResizeObserverStub {
+globalThis.ResizeObserver = FakeResizeObserver;
+
+class IntersectionObserverStub {
   observe() {}
   unobserve() {}
   disconnect() {}
+  takeRecords() {
+    return [];
+  }
 }
 
-globalThis.ResizeObserver = ResizeObserverStub;
+Object.assign(globalThis, { IntersectionObserver: IntersectionObserverStub });
 
 if (!HTMLDialogElement.prototype.showModal) {
   HTMLDialogElement.prototype.showModal = function () {
     this.open = true;
   };
   HTMLDialogElement.prototype.close = function () {
+    if (!this.open) return;
     this.open = false;
     this.dispatchEvent(new Event('close'));
   };
@@ -37,3 +46,16 @@ if (!HTMLElement.prototype.togglePopover) {
     return open;
   };
 }
+
+Element.prototype.scrollIntoView = () => {};
+
+globalThis.matchMedia = (query: string) => ({
+  matches: false,
+  media: query,
+  onchange: null,
+  addListener: () => {},
+  removeListener: () => {},
+  addEventListener: () => {},
+  removeEventListener: () => {},
+  dispatchEvent: () => false,
+});

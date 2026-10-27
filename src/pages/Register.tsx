@@ -1,17 +1,22 @@
 import styles from '@/styles/Auth.module.css';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
+import { Link } from 'react-router';
 
 import { useAuth } from '@/context/Auth';
 import { useError } from '@/context/Error';
 
 import Button from '@/components/Button';
+import OAuthButtons from '@/components/OAuthButtons';
+import Turnstile from '@/components/Turnstile';
 
 import { field } from '@/utilities/form';
 
 const Register = () => {
   const { register } = useAuth();
   const { showError, clearError } = useError();
+  // A challenge token works once, so a failed attempt renders a fresh challenge.
+  const [attempts, setAttempts] = useState(0);
 
   const [values, submit, pending] = useActionState(
     async (_: { name: string; email: string }, form: FormData) => {
@@ -19,9 +24,10 @@ const Register = () => {
       const email = field(form, 'email');
       clearError();
       try {
-        await register(name, email, field(form, 'password'));
+        await register(name, email, field(form, 'password'), field(form, 'turnstileToken'));
       } catch (error) {
         showError(error);
+        setAttempts((count) => count + 1);
       }
       return { name, email };
     },
@@ -44,10 +50,16 @@ const Register = () => {
           Password
           <input type='password' name='password' autoComplete='new-password' minLength={8} maxLength={256} required />
         </label>
-        <Button type='submit' disabled={pending}>
+        <Turnstile key={attempts} name='turnstileToken' />
+        <Button type='submit' pending={pending}>
           Register
         </Button>
       </form>
+      <p className={styles.divider}>or continue with</p>
+      <OAuthButtons />
+      <p className={styles.footer}>
+        Already have an account? <Link to='/login'>Log in</Link>
+      </p>
     </div>
   );
 };

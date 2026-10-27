@@ -3,15 +3,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--medium-spacing);
+  gap: var(--space-md);
+  padding: var(--space-md);
 }
 
-.link {
-  color: var(--purple);
-  font-weight: bold;
-  transition: color var(--animation-duration);
-
-  &:hover {
-    color: var(--purple-hover);
-  }
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
 }

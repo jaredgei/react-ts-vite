@@ -4,7 +4,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: var(--large-spacing);
+  gap: var(--space-sm);
+  padding: var(--space-lg);
   text-align: center;
 }
 
@@ -12,22 +13,19 @@
   font-size: 12rem;
   line-height: 1em;
   font-weight: bold;
-  margin: 0;
 }
 
 .title {
   font-weight: bold;
-  font-size: var(--large-font);
+  font-size: var(--font-size-lg);
   text-transform: uppercase;
-  margin: var(--small-spacing) 0 0;
 }
 
 .message {
   max-width: 400px;
-  color: var(--gray);
-  margin: var(--small-spacing) 0 0;
+  color: var(--color-text-muted);
 }
 
 .action {
-  margin-top: var(--large-spacing);
+  margin-top: var(--space-md);
 }

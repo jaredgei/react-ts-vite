@@ -10,11 +10,20 @@ export const routes: RouteObject[] = [
   {
     path: '/',
     Component: Layout,
+    HydrateFallback: Layout,
     errorElement: <RouteError />,
     children: [
       {
         index: true,
         lazy: lazy(() => import('@/pages/Index')),
+      },
+      {
+        path: 'verify-email',
+        lazy: lazy(() => import('@/pages/VerifyEmail')),
+      },
+      {
+        path: 'reset-password',
+        lazy: lazy(() => import('@/pages/ResetPassword')),
       },
       {
         lazy: lazy(() => import('@/components/GuestRoute')),
@@ -27,6 +36,10 @@ export const routes: RouteObject[] = [
             path: 'register',
             lazy: lazy(() => import('@/pages/Register')),
           },
+          {
+            path: 'forgot-password',
+            lazy: lazy(() => import('@/pages/ForgotPassword')),
+          },
         ],
       },
       {
@@ -35,6 +48,16 @@ export const routes: RouteObject[] = [
           {
             path: 'settings',
             lazy: lazy(() => import('@/pages/UserSettings')),
+          },
+          {
+            path: 'admin',
+            lazy: lazy(() => import('@/components/AdminRoute')),
+            children: [
+              {
+                index: true,
+                lazy: lazy(() => import('@/pages/Admin')),
+              },
+            ],
           },
         ],
       },

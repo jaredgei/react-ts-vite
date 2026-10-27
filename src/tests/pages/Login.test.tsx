@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { MemoryRouter } from 'react-router';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -9,27 +10,32 @@ import ErrorProvider from '@/context/ErrorProvider';
 
 import Login from '@/pages/Login';
 
-import { ApiError, get, post } from '@/utilities/api';
+import { ApiError } from '@/utilities/api';
+
+const { mockGet, mockPost } = vi.hoisted(() => ({
+  mockGet: vi.fn<(path: string, options?: { signal?: AbortSignal }) => Promise<unknown>>(),
+  mockPost: vi.fn<(path: string, body?: unknown, options?: { signal?: AbortSignal }) => Promise<unknown>>(),
+}));
 
 vi.mock('@/utilities/api', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/utilities/api')>()),
-  get: vi.fn(),
-  post: vi.fn(),
+  get: mockGet,
+  post: mockPost,
 }));
-
-const mockGet = vi.mocked(get);
-const mockPost = vi.mocked(post);
 
 const ErrorReader = () => <div data-testid='error'>{useError().message}</div>;
 
-const wrapper = ({ children }: { children: ReactNode }) => (
-  <ErrorProvider>
-    <AuthProvider>
-      <ErrorReader />
-      {children}
-    </AuthProvider>
-  </ErrorProvider>
-);
+const renderAt = (ui: ReactNode, path = '/') =>
+  render(
+    <MemoryRouter initialEntries={[path]}>
+      <ErrorProvider>
+        <AuthProvider>
+          <ErrorReader />
+          {ui}
+        </AuthProvider>
+      </ErrorProvider>
+    </MemoryRouter>,
+  );
 
 afterEach(() => {
   vi.clearAllMocks();
@@ -38,7 +44,7 @@ afterEach(() => {
 describe('Login page', () => {
   it('labels its fields for password managers', () => {
     mockGet.mockRejectedValue(new ApiError(401, 'Unauthorized'));
-    render(<Login />, { wrapper });
+    renderAt(<Login />);
     expect(screen.getByLabelText('Email')).toHaveAttribute('autocomplete', 'email');
     expect(screen.getByLabelText('Password')).toHaveAttribute('autocomplete', 'current-password');
   });
@@ -46,7 +52,7 @@ describe('Login page', () => {
   it('surfaces a failed login through the error channel', async () => {
     mockGet.mockRejectedValue(new ApiError(401, 'Unauthorized'));
     mockPost.mockRejectedValue(new ApiError(401, 'Invalid email or password'));
-    render(<Login />, { wrapper });
+    renderAt(<Login />);
 
     await userEvent.type(screen.getByLabelText('Email'), 'ada@example.com');
     await userEvent.type(screen.getByLabelText('Password'), 'wrong');
@@ -54,5 +60,18 @@ describe('Login page', () => {
 
     expect(mockPost).toHaveBeenCalledWith('/api/users/login', { email: 'ada@example.com', password: 'wrong' });
     expect(await screen.findByTestId('error')).toHaveTextContent('Invalid email or password');
+  });
+
+  it('explains a failed provider sign-in it was sent back from', async () => {
+    mockGet.mockRejectedValue(new ApiError(401, 'Unauthorized'));
+    renderAt(<Login />, '/login?error=oauth_account_exists');
+    expect(await screen.findByTestId('error')).toHaveTextContent('An account with this email already exists.');
+  });
+
+  it('offers a password reset and each sign-in provider', () => {
+    mockGet.mockRejectedValue(new ApiError(401, 'Unauthorized'));
+    renderAt(<Login />);
+    expect(screen.getByRole('link', { name: 'Forgot password?' })).toHaveAttribute('href', '/forgot-password');
+    expect(screen.getByRole('link', { name: 'Continue with Google' })).toHaveAttribute('href', '/api/users/oauth/google');
   });
 });

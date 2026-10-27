@@ -1,0 +1,19 @@
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-md);
+  margin: 0 var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-sunken);
+}
+
+.message {
+  flex: 1 1 240px;
+  color: var(--color-text-muted);
+
+  strong {
+    color: var(--color-text);
+  }
+}

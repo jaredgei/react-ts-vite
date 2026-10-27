@@ -24,9 +24,22 @@ npm run dev
 
 The dev server runs on `http://localhost:5173`.
 
+### Environment variables
+
+[`.env`](./.env) is committed with local-development defaults; put personal overrides in the gitignored `.env.local`. `VITE_TURNSTILE_SITE_KEY` is the [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) site key for the registration challenge; the committed value is Cloudflare's always-pass test key. Set the real one per environment at build time.
+
 ## Backend proxy
 
 The Vite dev server proxies requests starting with `/api` to a backend at `http://localhost:8008` (configured in `vite.config.ts` under `server.proxy`). This keeps API calls same-origin, so session cookies work without CORS. Make sure the `target` port matches the port your backend actually listens on, and update it if either side changes.
+
+It pairs with [express-ts-template](https://github.com/jaredgei/express-ts-template), whose routes it calls and whose OpenAPI document its API types come from. After changing a route there, regenerate them into this repo:
+
+```bash
+npm run api:types -- ../<this repo>/src/types/api.ts        # once
+npm run api:types:watch -- ../<this repo>/src/types/api.ts  # while you work
+```
+
+Commit `src/types/api.ts` with the change; a type error in the frontend is then the API drift it would otherwise ship.
 
 ## Scripts
 
@@ -65,13 +78,13 @@ Imports use the `@/` alias (defined by `paths` in `tsconfig.json` and honored by
 ## What's included
 
 - **Type-safe context** — `createSafeContext` builds a context plus a hook that throws a clear error when used outside its provider.
-- **Layered error handling** — a real `ErrorBoundary` (catches render crashes), a `RouteError` element for thrown route errors, a `NotFound` page for unmatched routes, and an `ErrorBanner` fed by `useError().showError(unknown)`. Every surface uses one policy (`toDisplayMessage`): strings and `ApiError` messages from the backend are shown as-is, while any other error's details appear only in development, so internals never leak in production. The banner clears on navigation and on each new form submission.
-- **Performant global hooks** — `useViewportTracker` (shared scroll/resize store via `useSyncExternalStore`, lazily subscribed and `requestAnimationFrame`-coalesced), `useElementRect` for measuring elements, and `useKeyPressed` built on `useEffectEvent`.
-- **Native platform UI** — `Modal` uses `<dialog>` (`showModal`, focus trapping, top layer, `::backdrop`), and `Suggestions`/`Dropdown`/`VerticalMenu` use the Popover API for light dismiss and Escape, with CSS `@starting-style` transitions. Menus support arrow-key/Home/End navigation, focus their first item on open, and return focus to the trigger on close.
+- **Layered error handling** — a real `ErrorBoundary` (catches render crashes), a `RouteError` element for thrown route errors, a `NotFound` page for unmatched routes, and an `ErrorToast` popover (so showing an error never shifts the layout) fed by `useError().showError(unknown)`. Every surface uses one policy (`toDisplayMessage`): strings and `ApiError` messages from the backend are shown as-is, while any other error's details appear only in development, so internals never leak in production. The toast clears when the path changes and on each new form submission.
+- **Performant global hooks** — `useViewportTracker` (shared scroll/resize store via `useSyncExternalStore`, lazily subscribed and `requestAnimationFrame`-coalesced; its snapshot changes only when the viewport does, while `useViewportMoves` also counts scrolling inside elements), `useElementRect` for measuring elements, `usePresence` to keep an element mounted until its exit transition ends, and `useWindowKeys` for page-wide shortcuts that yield to fields, dialogs, and menus.
+- **Native platform UI** — `Modal` uses `<dialog>` (`showModal`, focus trapping, top layer, `::backdrop`); with `confirm` it runs its action as a form, shows a failure inline, and reports an action still running when closed. `Menu` (opened by `MenuButton` or `useMenu`) uses the Popover API for light dismiss and Escape, with CSS `@starting-style` transitions; it places itself on whichever side of its trigger has room, supports arrow-key/Home/End navigation, focuses its first item on open, returns focus to the trigger on close, and leaves the DOM once closed. `Button` covers buttons, in-app links (`to`), and full-page links (`href`), with `primary`/`secondary`/`danger`/`ghost` variants and a `pending` state.
 - **Accessible defaults** — WCAG AA contrast for the palette, `prefers-reduced-motion` honored globally, labelled `Spinner`/`Toggle`/`Modal`, and `autocomplete` hints on auth forms.
-- **CSS modules with tokens** — colors, spacing, fonts, radii, z-indexes, durations, and a `--blur` glass effect live as custom properties in `@/styles/tokens.css`.
-- **API client** — `@/utilities/api` wraps `fetch` with `get`/`post`/`put`/`patch`/`del`, `credentials: 'include'`, optional `params` and `signal` (`AbortSignal`), an `ApiError` carrying the status and the backend's `errors` messages (network failures become `ApiError` with status `0`; aborts are rethrown untouched), and `setUnauthorizedHandler` to clear the session on any 401. Response bodies are typed by the caller, not validated at runtime; add a schema parser at the call site for untrusted shapes.
-- **Session authentication** — `AuthProvider`/`useAuth` bootstrap the session from `/api/users/me` (a 401 means logged out; any other failure is surfaced). Login/Register use React 19 `<form action>` + `useActionState`. `routes.tsx` guards routes: `/` swaps `Home`/`Dashboard`, guest-only routes (`/login`, `/register`) redirect when signed in, and protected routes (`/settings`) redirect to `/login`, then return to the full original location (path, query, and hash; same-origin only). Guards are UX only — the backend session enforces access on every request.
+- **CSS modules with tokens** — a raw palette plus semantic `--color-*` tokens, and scales for spacing, font sizes, radii, icon sizes, and durations, live as custom properties in `@/styles/tokens.css`; restyling the app means editing that file. Named breakpoints (`@media (--mobile)`) come from `@/styles/media.css` via Lightning CSS's custom media.
+- **Typed API client** — `@/utilities/api` wraps `fetch` with `get`/`post`/`put`/`patch`/`del`, typed from the server's generated OpenAPI types (`@/types/api`): each call takes a literal route path, and its body, query, path `params`, and response are checked against that route. It sends `credentials: 'include'`, forwards a `signal` (`AbortSignal`), retries a GET that hit a network failure or a 502/504, throws an `ApiError` carrying the status and the backend's `errors` messages (network failures become `ApiError` with status `0`; aborts are rethrown untouched; an unreadable 5xx gets a friendly message), and calls `setUnauthorizedHandler`'s handler to clear the session on any 401. Derive types from responses with `ApiResponse<'get', '/api/users/me'>`, as `User` is.
+- **Session authentication** — `AuthProvider`/`useAuth` bootstrap the session from `/api/users/me` (a 401 means logged out; any other failure is surfaced). Login, Register, Forgot Password, and Reset Password use React 19 `<form action>` + `useActionState`. Registration renders a Cloudflare Turnstile challenge (invisible unless Cloudflare asks for interaction, fresh after each failed attempt). Login and Register offer Google, Facebook, and Apple sign-in, and Login explains a failed provider sign-in it is sent back from. Unverified users see a banner to resend their verification link, and `/verify-email` confirms the emailed link. Settings renames the account, emails a password reset link, and deletes the account after the email is typed to confirm. `routes.tsx` guards routes: `/` swaps `Home`/`Dashboard`, guest-only routes (`/login`, `/register`, `/forgot-password`) redirect when signed in, protected routes (`/settings`) redirect to `/login` and then return to the full original location (path, query, and hash; same-origin only), and `/admin` shows only to admins. Guards are UX only — the backend session enforces access on every request.
 
 ## Testing
 
@@ -96,7 +109,7 @@ The frontend is one layer; these must also hold where the app is deployed:
 
 - **Sessions** — use an `HttpOnly`, `Secure`, `SameSite=Lax` (or `Strict`) cookie. The client never reads or stores tokens.
 - **CSRF** — `SameSite` alone is not sufficient for every case; the backend should also verify `Origin`/`Sec-Fetch-Site` on state-changing requests.
-- **Content Security Policy** — serve `index.html` with a CSP such as `default-src 'self'; img-src 'self' data:; style-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'`, plus `X-Content-Type-Options: nosniff` and `Referrer-Policy: strict-origin-when-cross-origin`. The production build has no inline scripts, so no `unsafe-inline` is needed.
+- **Content Security Policy** — serve `index.html` with a CSP such as `default-src 'self'; script-src 'self' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; img-src 'self' data:; style-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'` (the Cloudflare origin is for the Turnstile challenge), plus `X-Content-Type-Options: nosniff` and `Referrer-Policy: strict-origin-when-cross-origin`. The production build has no inline scripts, so no `unsafe-inline` is needed.
 - **Secrets** — anything in `import.meta.env` is shipped to the browser. Never put secrets in `VITE_*` variables.
 
 ## AI agents

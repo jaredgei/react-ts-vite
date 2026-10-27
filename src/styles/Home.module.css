@@ -1,9 +1,5 @@
 .home {
   flex: 1;
-  background-color: var(--silver);
-  padding: var(--medium-spacing);
-
-  h1 {
-    margin: 0;
-  }
+  background-color: var(--color-surface-sunken);
+  padding: var(--space-md);
 }

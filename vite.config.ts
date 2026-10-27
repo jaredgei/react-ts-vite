@@ -17,6 +17,8 @@ export default defineConfig({
   },
   css: {
     transformer: 'lightningcss',
+    // Keyframe names are global, so a shared animation is defined once, in App.css.
+    lightningcss: { drafts: { customMedia: true }, cssModules: { animation: false } },
   },
   build: {
     cssMinify: 'lightningcss',

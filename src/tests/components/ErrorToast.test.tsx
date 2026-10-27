@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { useError } from '@/context/Error';
 import ErrorProvider from '@/context/ErrorProvider';
 
-import ErrorBanner from '@/components/ErrorBanner';
+import ErrorToast from '@/components/ErrorToast';
 
 const wrapper = ({ children }: { children: ReactNode }) => <ErrorProvider>{children}</ErrorProvider>;
 
@@ -19,18 +19,17 @@ const Trigger = ({ message }: { message: string }) => {
   );
 };
 
-describe('ErrorBanner', () => {
-  it('renders nothing visible when there is no error', () => {
-    render(<ErrorBanner />, { wrapper });
-    expect(screen.getByRole('alert')).toHaveTextContent('');
-    expect(screen.queryByRole('button', { name: 'Dismiss error' })).not.toBeInTheDocument();
+describe('ErrorToast', () => {
+  it('stays hidden when there is no error', () => {
+    render(<ErrorToast />, { wrapper });
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('shows the error message when present', () => {
     const Harness = () => {
       const { showError } = useError();
       useEffect(() => showError(new Error('something failed')), [showError]);
-      return <ErrorBanner />;
+      return <ErrorToast />;
     };
     render(<Harness />, { wrapper });
     expect(screen.getByRole('alert')).toHaveTextContent('something failed');
@@ -40,7 +39,7 @@ describe('ErrorBanner', () => {
     render(
       <>
         <Trigger message={'First problem\nSecond problem'} />
-        <ErrorBanner />
+        <ErrorToast />
       </>,
       { wrapper },
     );
@@ -52,13 +51,13 @@ describe('ErrorBanner', () => {
     render(
       <>
         <Trigger message='boom' />
-        <ErrorBanner />
+        <ErrorToast />
       </>,
       { wrapper },
     );
     await userEvent.click(screen.getByRole('button', { name: 'trigger' }));
     expect(screen.getByText('boom')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Dismiss error' }));
-    expect(screen.queryByText('boom')).not.toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 });

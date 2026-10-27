@@ -25,6 +25,20 @@ describe('Button', () => {
     expect(onClick).toHaveBeenCalledOnce();
   });
 
+  it('shows a busy state and ignores clicks while pending', async () => {
+    const onClick = vi.fn();
+    render(
+      <Button pending onClick={onClick}>
+        Save
+      </Button>,
+    );
+    const button = screen.getByRole('button', { name: 'Save' });
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute('aria-busy', 'true');
+    await userEvent.click(button, { pointerEventsCheck: 0 });
+    expect(onClick).not.toHaveBeenCalled();
+  });
+
   it('is disabled and does not fire onClick when disabled', async () => {
     const onClick = vi.fn();
     render(
@@ -50,6 +64,11 @@ describe('Button', () => {
       </MemoryRouter>,
     );
     expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/home');
+  });
+
+  it('renders a plain anchor for full-page links', () => {
+    render(<Button href='/api/users/oauth/google'>Google</Button>);
+    expect(screen.getByRole('link', { name: 'Google' })).toHaveAttribute('href', '/api/users/oauth/google');
   });
 
   it('does not link to its destination when disabled', () => {

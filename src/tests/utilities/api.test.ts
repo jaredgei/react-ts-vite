@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { ApiError, del, get, patch, post, put, setUnauthorizedHandler } from '@/utilities/api';
+import { ApiError, del, get, patch, post, setUnauthorizedHandler } from '@/utilities/api';
 
 const mockFetch = (body: unknown, status = 200) => {
   const spy = vi.fn<typeof fetch>(async () => (status === 204 ? new Response(null, { status }) : Response.json(body, { status })));
@@ -15,16 +15,10 @@ afterEach(() => {
 
 describe('api', () => {
   it('sends GET with credentials and returns parsed json', async () => {
-    const spy = mockFetch({ users: [] });
-    const result = await get('/api/users');
-    expect(result).toEqual({ users: [] });
-    expect(spy).toHaveBeenCalledWith('/api/users', expect.objectContaining({ method: 'GET', credentials: 'include' }));
-  });
-
-  it('serializes query params, skipping null and undefined', async () => {
-    const spy = mockFetch({ users: [] });
-    await get('/api/users', { params: { limit: 20, offset: 0, search: undefined, active: null } });
-    expect(spy).toHaveBeenCalledWith('/api/users?limit=20&offset=0', expect.anything());
+    const spy = mockFetch({ user: { id: '1' } });
+    const result = await get('/api/users/me');
+    expect(result).toEqual({ user: { id: '1' } });
+    expect(spy).toHaveBeenCalledWith('/api/users/me', expect.objectContaining({ method: 'GET', credentials: 'include' }));
   });
 
   it('sends POST with a json body and content-type header', async () => {
@@ -40,39 +34,58 @@ describe('api', () => {
     );
   });
 
-  it('sends PUT, PATCH, and DELETE with the right methods', async () => {
+  it('serializes query parameters, skipping undefined ones', async () => {
+    const spy = mockFetch({ sessions: [], nextCursor: null });
+    await get('/api/users/me/sessions', { query: { limit: 20, cursor: undefined } });
+    expect(spy).toHaveBeenCalledWith('/api/users/me/sessions?limit=20', expect.anything());
+  });
+
+  it('fills path parameters into the route, encoded', async () => {
     const spy = mockFetch(null, 204);
-    await put('/api/items/1', { name: 'a' });
-    await patch('/api/items/1', { name: 'b' });
-    await del('/api/items/1');
-    expect(spy.mock.calls.map(([, init]) => init?.method)).toEqual(['PUT', 'PATCH', 'DELETE']);
+    await get('/api/users/oauth/{provider}', { params: { provider: 'a/b' } });
+    expect(spy).toHaveBeenCalledWith('/api/users/oauth/a%2Fb', expect.anything());
+  });
+
+  it('sends PATCH and DELETE with the right methods', async () => {
+    const spy = mockFetch(null, 204);
+    await patch('/api/users/me', { name: 'Ada' });
+    await del('/api/users/me');
+    expect(spy.mock.calls.map(([, init]) => init?.method)).toEqual(['PATCH', 'DELETE']);
+  });
+
+  it('sends POST without a body or content-type when the route takes none', async () => {
+    const spy = mockFetch(null, 204);
+    await post('/api/users/logout');
+    expect(spy).toHaveBeenCalledWith('/api/users/logout', expect.objectContaining({ method: 'POST', headers: undefined, body: undefined }));
   });
 
   it('returns null for an empty response', async () => {
     mockFetch(null, 204);
-    expect(await del('/api/items/1')).toBeNull();
+    expect(await post('/api/users/logout')).toBeNull();
   });
 
   it('forwards an abort signal to fetch', async () => {
     const spy = mockFetch({});
     const controller = new AbortController();
-    await get('/api/users', { signal: controller.signal });
-    expect(spy).toHaveBeenCalledWith('/api/users', expect.objectContaining({ signal: controller.signal }));
+    await get('/api/users/me', { signal: controller.signal });
+    expect(spy).toHaveBeenCalledWith('/api/users/me', expect.objectContaining({ signal: controller.signal }));
   });
 
   it('joins backend error objects into one message', async () => {
     mockFetch({ errors: [{ message: 'Name is required', field: 'name' }, { message: 'Invalid email address' }] }, 400);
-    await expect(post('/api/users/register', {})).rejects.toThrow('Name is required\nInvalid email address');
+    await expect(post('/api/users/register', { name: '', email: '', password: '', turnstileToken: '' })).rejects.toThrow(
+      'Name is required\nInvalid email address',
+    );
   });
 
   it('accepts plain string errors', async () => {
     mockFetch({ errors: ['Invalid email or password'] }, 401);
-    await expect(post('/api/users/login', {})).rejects.toThrow('Invalid email or password');
+    await expect(post('/api/users/login', { email: '', password: '' })).rejects.toThrow('Invalid email or password');
   });
 
   it('throws an ApiError carrying the status code', async () => {
     mockFetch({ errors: 'Too many attempts, please try again later' }, 429);
-    await expect(post('/api/users/login', {})).rejects.toMatchObject({ status: 429, name: 'ApiError' });
+    await expect(post('/api/users/login', { email: '', password: '' })).rejects.toMatchObject({ status: 429, name: 'ApiError' });
   });
 
   it('invokes the unauthorized handler on a 401', async () => {
@@ -87,7 +100,7 @@ describe('api', () => {
     globalThis.fetch = vi.fn<typeof fetch>(async () => {
       throw new TypeError('Failed to fetch');
     });
-    const request = get('/api/users');
+    const request = post('/api/users/logout');
     await expect(request).rejects.toMatchObject({ name: 'ApiError', status: 0 });
     await expect(request).rejects.toThrow('Unable to reach the server');
   });
@@ -98,11 +111,44 @@ describe('api', () => {
     globalThis.fetch = vi.fn<typeof fetch>(async () => {
       throw new DOMException('Aborted', 'AbortError');
     });
-    await expect(get('/api/users', { signal: controller.signal })).rejects.toMatchObject({ name: 'AbortError' });
+    await expect(get('/api/users/me', { signal: controller.signal })).rejects.toMatchObject({ name: 'AbortError' });
   });
 
-  it('falls back to the status when the error body is unusable', async () => {
+  it('shows a readable message, not the status, when the error body is unusable', async () => {
     mockFetch(null, 500);
-    await expect(get('/api/users')).rejects.toThrow('Request failed with status 500');
+    await expect(get('/api/users/me')).rejects.toThrow('Something went wrong on our end. Please try again in a moment.');
+  });
+});
+
+describe('GET requests', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('retries a lost request and a gateway error', async () => {
+    vi.useFakeTimers();
+    const spy = vi
+      .fn<typeof fetch>()
+      .mockRejectedValueOnce(new TypeError('Failed to fetch'))
+      .mockResolvedValueOnce(new Response(null, { status: 502 }))
+      .mockResolvedValueOnce(Response.json({ user: { id: '1' } }));
+    globalThis.fetch = spy;
+
+    const request = get('/api/users/me');
+    await vi.runAllTimersAsync();
+
+    expect(await request).toEqual({ user: { id: '1' } });
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  it('gives up with a readable message while the server stays unreachable', async () => {
+    vi.useFakeTimers();
+    const spy = vi.fn<typeof fetch>(async () => new Response(null, { status: 502 }));
+    globalThis.fetch = spy;
+
+    const failed = expect(get('/api/users/me')).rejects.toThrow('Something went wrong on our end. Please try again in a moment.');
+    await vi.runAllTimersAsync();
+    await failed;
+    expect(spy).toHaveBeenCalledTimes(3);
   });
 });

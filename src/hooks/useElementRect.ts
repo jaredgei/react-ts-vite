@@ -1,15 +1,15 @@
 import { type RefObject, useLayoutEffect, useState } from 'react';
 
-import { useViewportTracker } from '@/hooks/useViewportTracker';
+import { useViewportMoves } from '@/hooks/useViewportTracker';
 
 export const useElementRect = (ref?: RefObject<HTMLElement | null>, enabled = true) => {
   const [rect, setRect] = useState<DOMRect | null>(null);
-  const viewport = useViewportTracker(enabled);
+  const moves = useViewportMoves(enabled);
 
   useLayoutEffect(() => {
     if (!enabled || !ref?.current) return;
     setRect(ref.current.getBoundingClientRect());
-  }, [ref, viewport, enabled]);
+  }, [ref, moves, enabled]);
 
   useLayoutEffect(() => {
     if (!enabled || !ref?.current) return;

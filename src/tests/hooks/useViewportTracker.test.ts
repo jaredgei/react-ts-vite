@@ -1,7 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { useViewportTracker } from '@/hooks/useViewportTracker';
+import { useViewportMoves, useViewportTracker } from '@/hooks/useViewportTracker';
 
 describe('useViewportTracker', () => {
   it('returns the current viewport dimensions', () => {
@@ -28,8 +28,18 @@ describe('useViewportTracker', () => {
     await waitFor(() => expect(result.current.width).toBe(500));
   });
 
-  it('does not subscribe when disabled', () => {
-    const { result } = renderHook(() => useViewportTracker(false));
+  it('keeps the same viewport when an element scrolls, while counting the move', async () => {
+    const { result } = renderHook(() => ({ viewport: useViewportTracker(), moves: useViewportMoves() }));
+    const { viewport, moves } = result.current;
+    act(() => {
+      document.body.dispatchEvent(new Event('scroll'));
+    });
+    await waitFor(() => expect(result.current.moves).toBeGreaterThan(moves));
+    expect(result.current.viewport).toBe(viewport);
+  });
+
+  it('counts no moves when disabled', () => {
+    const { result } = renderHook(() => useViewportMoves(false));
     const before = result.current;
     act(() => {
       window.scrollY = 999;

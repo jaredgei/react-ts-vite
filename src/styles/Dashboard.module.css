@@ -1,7 +1,3 @@
 .dashboard {
-  padding: var(--medium-spacing);
-
-  h1 {
-    margin: 0;
-  }
+  padding: var(--space-md);
 }
